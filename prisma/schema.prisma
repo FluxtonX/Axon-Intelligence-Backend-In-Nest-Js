@@ -1,0 +1,150 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ProjectStatus {
+  DRAFT
+  PUBLISHED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum ProposalStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum ContractStatus {
+  PENDING_PAYMENT
+  ACTIVE
+  COMPLETED
+  DISPUTED
+}
+
+model User {
+  id           String     @id @default(uuid())
+  email        String     @unique
+  passwordHash String?
+  googleId     String?    @unique
+  authProvider String     @default("LOCAL")
+  role         Role       @default(USER)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  profile      Profile?
+  resetTokens  PasswordResetToken[]
+  services     Service[]
+  projects     Project[]
+  proposals    Proposal[]
+  sentMessages Message[]  @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+}
+
+model Profile {
+  id         String   @id @default(uuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id])
+  firstName  String
+  lastName   String
+  avatarUrl  String?
+  bio        String?
+  title      String?
+  hourlyRate Float?
+  skills     String[]
+}
+
+model Service {
+  id           String   @id @default(uuid())
+  freelancerId String
+  freelancer   User     @relation(fields: [freelancerId], references: [id])
+  title        String
+  category     String
+  description  String
+  price        Float
+  deliveryDays Int
+  imageUrl     String?
+  createdAt    DateTime @default(now())
+
+  @@index([freelancerId])
+}
+
+model Project {
+  id          String        @id @default(uuid())
+  clientId    String
+  client      User          @relation(fields: [clientId], references: [id])
+  title       String
+  description String
+  budget      Float
+  timeline    String?
+  status      ProjectStatus @default(DRAFT)
+  createdAt   DateTime      @default(now())
+  proposals   Proposal[]
+  contracts   Contract[]
+
+  @@index([clientId])
+}
+
+model Proposal {
+  id           String         @id @default(uuid())
+  projectId    String
+  project      Project        @relation(fields: [projectId], references: [id])
+  freelancerId String
+  freelancer   User           @relation(fields: [freelancerId], references: [id])
+  bidAmount    Float
+  deliveryDays Int
+  coverLetter  String
+  status       ProposalStatus @default(PENDING)
+  createdAt    DateTime       @default(now())
+
+  contract     Contract?
+
+  @@index([projectId, freelancerId])
+}
+
+model Contract {
+  id           String         @id @default(uuid())
+  proposalId   String?        @unique
+  proposal     Proposal?      @relation(fields: [proposalId], references: [id])
+  projectId    String
+  project      Project        @relation(fields: [projectId], references: [id])
+  clientId     String
+  freelancerId String
+  amount       Float
+  status       ContractStatus @default(PENDING_PAYMENT)
+  createdAt    DateTime       @default(now())
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  senderId   String
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiverId String
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  content    String
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([senderId, receiverId])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
