@@ -8,9 +8,9 @@ export declare class ProposalsController {
         id: string;
         createdAt: Date;
         status: import("@prisma/client").$Enums.ProposalStatus;
-        deliveryDays: number;
         freelancerId: string;
         bidAmount: number;
+        deliveryDays: number;
         coverLetter: string;
     }>;
     findByProject(projectId: string, user: any): Promise<({
@@ -24,6 +24,8 @@ export declare class ProposalsController {
                 bio: string | null;
                 hourlyRate: number | null;
                 skills: string[];
+                averageRating: number | null;
+                totalReviews: number;
                 userId: string;
             } | null;
             id: string;
@@ -33,9 +35,9 @@ export declare class ProposalsController {
         id: string;
         createdAt: Date;
         status: import("@prisma/client").$Enums.ProposalStatus;
-        deliveryDays: number;
         freelancerId: string;
         bidAmount: number;
+        deliveryDays: number;
         coverLetter: string;
     })[]>;
     acceptProposal(id: string, user: any): Promise<{
@@ -43,9 +45,9 @@ export declare class ProposalsController {
         id: string;
         createdAt: Date;
         status: import("@prisma/client").$Enums.ProposalStatus;
-        deliveryDays: number;
         freelancerId: string;
         bidAmount: number;
+        deliveryDays: number;
         coverLetter: string;
     }>;
 }

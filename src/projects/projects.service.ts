@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -57,7 +57,7 @@ export class ProjectsService {
     }
     
     if (project.status === 'IN_PROGRESS') {
-      throw new Error('Cannot update an in-progress project');
+      throw new BadRequestException('Cannot update an in-progress project');
     }
 
     return this.prisma.project.update({

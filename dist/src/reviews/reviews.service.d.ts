@@ -1,0 +1,33 @@
+import { PrismaService } from '../database/prisma.service';
+import { CreateReviewDto } from './dto/create-review.dto';
+export declare class ReviewsService {
+    private prisma;
+    constructor(prisma: PrismaService);
+    createReview(reviewerId: string, dto: CreateReviewDto): Promise<{
+        id: string;
+        createdAt: Date;
+        contractId: string;
+        rating: number;
+        comment: string | null;
+        reviewerId: string;
+        revieweeId: string;
+    }>;
+    getReviewsForUser(userId: string, skip?: number, take?: number): Promise<({
+        reviewer: {
+            profile: {
+                firstName: string;
+                lastName: string;
+                avatarUrl: string | null;
+            } | null;
+            id: string;
+        };
+    } & {
+        id: string;
+        createdAt: Date;
+        contractId: string;
+        rating: number;
+        comment: string | null;
+        reviewerId: string;
+        revieweeId: string;
+    })[]>;
+}

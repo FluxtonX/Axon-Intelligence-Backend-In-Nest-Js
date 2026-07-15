@@ -1,12 +1,16 @@
 import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
+import { WalletsService } from '../wallets/wallets.service';
 import Stripe from 'stripe';
 
 @Injectable()
 export class ContractsService {
   private stripe: Stripe;
 
-  constructor(private prisma: PrismaService) {
+  constructor(
+    private prisma: PrismaService,
+    private walletsService: WalletsService
+  ) {
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_123', {
       apiVersion: '2023-10-16' as any,
     });
@@ -47,6 +51,42 @@ export class ContractsService {
     });
 
     return { url: session.url };
+  }
+
+  async completeContract(contractId: string, clientId: string) {
+    const contract = await this.prisma.contract.findUnique({
+      where: { id: contractId },
+    });
+
+    if (!contract || contract.clientId !== clientId) {
+      throw new ForbiddenException('Cannot access this contract or you are not the client');
+    }
+
+    if (contract.status !== 'ACTIVE') {
+      throw new BadRequestException('Only ACTIVE contracts can be completed');
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      const updatedContract = await tx.contract.update({
+        where: { id: contractId },
+        data: { status: 'COMPLETED' },
+      });
+
+      await tx.project.update({
+        where: { id: contract.projectId },
+        data: { status: 'COMPLETED' },
+      });
+
+      // Release escrow to freelancer earnings
+      await this.walletsService.releaseEscrowToEarnings(
+        contract.freelancerId,
+        contract.clientId,
+        contract.amount,
+        contract.id
+      );
+
+      return updatedContract;
+    });
   }
 
   async handleStripeWebhook(signature: string, payload: Buffer) {

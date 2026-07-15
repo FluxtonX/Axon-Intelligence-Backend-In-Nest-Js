@@ -15,12 +15,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContractsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../database/prisma.service");
+const wallets_service_1 = require("../wallets/wallets.service");
 const stripe_1 = __importDefault(require("stripe"));
 let ContractsService = class ContractsService {
     prisma;
+    walletsService;
     stripe;
-    constructor(prisma) {
+    constructor(prisma, walletsService) {
         this.prisma = prisma;
+        this.walletsService = walletsService;
         this.stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY || 'sk_test_123', {
             apiVersion: '2023-10-16',
         });
@@ -57,6 +60,29 @@ let ContractsService = class ContractsService {
         });
         return { url: session.url };
     }
+    async completeContract(contractId, clientId) {
+        const contract = await this.prisma.contract.findUnique({
+            where: { id: contractId },
+        });
+        if (!contract || contract.clientId !== clientId) {
+            throw new common_1.ForbiddenException('Cannot access this contract or you are not the client');
+        }
+        if (contract.status !== 'ACTIVE') {
+            throw new common_1.BadRequestException('Only ACTIVE contracts can be completed');
+        }
+        return this.prisma.$transaction(async (tx) => {
+            const updatedContract = await tx.contract.update({
+                where: { id: contractId },
+                data: { status: 'COMPLETED' },
+            });
+            await tx.project.update({
+                where: { id: contract.projectId },
+                data: { status: 'COMPLETED' },
+            });
+            await this.walletsService.releaseEscrowToEarnings(contract.freelancerId, contract.clientId, contract.amount, contract.id);
+            return updatedContract;
+        });
+    }
     async handleStripeWebhook(signature, payload) {
         let event;
         try {
@@ -86,6 +112,7 @@ let ContractsService = class ContractsService {
 exports.ContractsService = ContractsService;
 exports.ContractsService = ContractsService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        wallets_service_1.WalletsService])
 ], ContractsService);
 //# sourceMappingURL=contracts.service.js.map

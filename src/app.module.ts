@@ -13,7 +13,8 @@ import { ContractsModule } from './contracts/contracts.module';
 import { MessagesModule } from './messages/messages.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { DatabaseModule } from './database/database.module';
-
+import { ReviewsModule } from './reviews/reviews.module';
+import { WalletsModule } from './wallets/wallets.module';
 @Module({
   imports: [
     CommonModule,
@@ -27,6 +28,8 @@ import { DatabaseModule } from './database/database.module';
     MessagesModule,
     UploadsModule,
     DatabaseModule,
+    ReviewsModule,
+    WalletsModule,
   ],
   controllers: [AppController],
   providers: [

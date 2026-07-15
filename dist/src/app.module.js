@@ -22,6 +22,8 @@ const contracts_module_1 = require("./contracts/contracts.module");
 const messages_module_1 = require("./messages/messages.module");
 const uploads_module_1 = require("./uploads/uploads.module");
 const database_module_1 = require("./database/database.module");
+const reviews_module_1 = require("./reviews/reviews.module");
+const wallets_module_1 = require("./wallets/wallets.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -39,6 +41,8 @@ exports.AppModule = AppModule = __decorate([
             messages_module_1.MessagesModule,
             uploads_module_1.UploadsModule,
             database_module_1.DatabaseModule,
+            reviews_module_1.ReviewsModule,
+            wallets_module_1.WalletsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

@@ -12,6 +12,8 @@ export declare class UsersService {
             bio: string | null;
             hourlyRate: number | null;
             skills: string[];
+            averageRating: number | null;
+            totalReviews: number;
             userId: string;
         } | null;
         email: string;
@@ -31,6 +33,8 @@ export declare class UsersService {
         bio: string | null;
         hourlyRate: number | null;
         skills: string[];
+        averageRating: number | null;
+        totalReviews: number;
         userId: string;
     }>;
 }

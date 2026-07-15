@@ -26,6 +26,8 @@ export declare class ProjectsController {
                     bio: string | null;
                     hourlyRate: number | null;
                     skills: string[];
+                    averageRating: number | null;
+                    totalReviews: number;
                     userId: string;
                 } | null;
                 id: string;
@@ -53,9 +55,9 @@ export declare class ProjectsController {
             id: string;
             createdAt: Date;
             status: import("@prisma/client").$Enums.ProposalStatus;
-            deliveryDays: number;
             freelancerId: string;
             bidAmount: number;
+            deliveryDays: number;
             coverLetter: string;
         }[];
         client: {
@@ -68,6 +70,8 @@ export declare class ProjectsController {
                 bio: string | null;
                 hourlyRate: number | null;
                 skills: string[];
+                averageRating: number | null;
+                totalReviews: number;
                 userId: string;
             } | null;
             id: string;

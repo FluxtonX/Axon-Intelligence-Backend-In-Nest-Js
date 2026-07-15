@@ -19,6 +19,14 @@ export class ContractsController {
     return this.contractsService.createCheckout(proposalId, user.id);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post('contracts/:id/complete')
+  @ApiOperation({ summary: 'Mark a contract as completed' })
+  completeContract(@Param('id') id: string, @CurrentUser() user: any) {
+    return this.contractsService.completeContract(id, user.id);
+  }
+
   @Post('payments/webhook')
   @ApiOperation({ summary: 'Stripe webhook endpoint' })
   async handleWebhook(

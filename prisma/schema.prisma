@@ -32,6 +32,20 @@ enum ContractStatus {
   DISPUTED
 }
 
+enum TransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  ESCROW_LOCK
+  ESCROW_RELEASE
+  EARNING
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
 model User {
   id           String     @id @default(uuid())
   email        String     @unique
@@ -49,6 +63,9 @@ model User {
   proposals    Proposal[]
   sentMessages Message[]  @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
+  reviewsGiven   Review[] @relation("Reviewer")
+  reviewsReceived Review[] @relation("Reviewee")
+  wallet       Wallet?
 }
 
 model Profile {
@@ -62,6 +79,8 @@ model Profile {
   title      String?
   hourlyRate Float?
   skills     String[]
+  averageRating Float?  @default(0)
+  totalReviews  Int     @default(0)
 }
 
 model Service {
@@ -123,6 +142,8 @@ model Contract {
   amount       Float
   status       ContractStatus @default(PENDING_PAYMENT)
   createdAt    DateTime       @default(now())
+  
+  reviews      Review[]
 }
 
 model Message {
@@ -147,4 +168,45 @@ model PasswordResetToken {
   createdAt DateTime @default(now())
 
   @@index([userId])
+}
+
+model Review {
+  id          String   @id @default(uuid())
+  contractId  String
+  contract    Contract @relation(fields: [contractId], references: [id])
+  reviewerId  String
+  reviewer    User     @relation("Reviewer", fields: [reviewerId], references: [id])
+  revieweeId  String
+  reviewee    User     @relation("Reviewee", fields: [revieweeId], references: [id])
+  rating      Int
+  comment     String?
+  createdAt   DateTime @default(now())
+
+  @@unique([contractId, reviewerId]) // A user can only review a specific contract once
+  @@index([revieweeId])
+}
+
+model Wallet {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  balance   Float    @default(0)
+  escrow    Float    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transactions Transaction[]
+}
+
+model Transaction {
+  id          String            @id @default(uuid())
+  walletId    String
+  wallet      Wallet            @relation(fields: [walletId], references: [id])
+  amount      Float
+  type        TransactionType
+  status      TransactionStatus @default(PENDING)
+  referenceId String?
+  createdAt   DateTime          @default(now())
+  
+  @@index([walletId])
 }
