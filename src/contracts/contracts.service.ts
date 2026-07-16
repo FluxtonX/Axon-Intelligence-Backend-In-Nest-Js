@@ -62,8 +62,8 @@ export class ContractsService {
       throw new ForbiddenException('Cannot access this contract or you are not the client');
     }
 
-    if (contract.status !== 'ACTIVE') {
-      throw new BadRequestException('Only ACTIVE contracts can be completed');
+    if (contract.status !== 'ACTIVE' && contract.status !== 'SUBMITTED') {
+      throw new BadRequestException('Only ACTIVE or SUBMITTED contracts can be completed');
     }
 
     return this.prisma.$transaction(async (tx) => {
@@ -115,6 +115,45 @@ export class ContractsService {
       });
 
       return updated;
+    });
+  }
+
+  async getMyContracts(userId: string) {
+    return this.prisma.contract.findMany({
+      where: {
+        OR: [
+          { clientId: userId },
+          { freelancerId: userId },
+        ],
+      },
+      include: {
+        project: true,
+        proposal: {
+          include: { freelancer: { select: { id: true, profile: true } } }
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async submitWork(contractId: string, freelancerId: string, submissionDetails: string) {
+    const contract = await this.prisma.contract.findUnique({
+      where: { id: contractId },
+    });
+
+    if (!contract || contract.freelancerId !== freelancerId) {
+      throw new ForbiddenException('Cannot access this contract');
+    }
+
+    if (contract.status !== 'ACTIVE') {
+      throw new BadRequestException('Only ACTIVE contracts can be submitted');
+    }
+
+    // Since we don't have a submission details field in schema, we'll just update status.
+    // In a real app we would save the submissionDetails.
+    return this.prisma.contract.update({
+      where: { id: contractId },
+      data: { status: 'SUBMITTED' },
     });
   }
 

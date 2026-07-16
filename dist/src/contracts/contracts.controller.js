@@ -23,6 +23,9 @@ let ContractsController = class ContractsController {
     constructor(contractsService) {
         this.contractsService = contractsService;
     }
+    getMyContracts(user) {
+        return this.contractsService.getMyContracts(user.id);
+    }
     createCheckout(proposalId, user) {
         return this.contractsService.createCheckout(proposalId, user.id);
     }
@@ -31,6 +34,9 @@ let ContractsController = class ContractsController {
     }
     fundContract(id, user) {
         return this.contractsService.fundContract(id, user.id);
+    }
+    submitWork(id, submissionDetails, user) {
+        return this.contractsService.submitWork(id, user.id, submissionDetails);
     }
     async handleWebhook(signature, req) {
         if (!signature || !req.rawBody) {
@@ -41,6 +47,16 @@ let ContractsController = class ContractsController {
     }
 };
 exports.ContractsController = ContractsController;
+__decorate([
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('contracts/me'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get current user contracts' }),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], ContractsController.prototype, "getMyContracts", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
@@ -74,6 +90,18 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], ContractsController.prototype, "fundContract", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('contracts/:id/submit'),
+    (0, swagger_1.ApiOperation)({ summary: 'Submit work for a contract' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)('submissionDetails')),
+    __param(2, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:returntype", void 0)
+], ContractsController.prototype, "submitWork", null);
 __decorate([
     (0, common_1.Post)('payments/webhook'),
     (0, swagger_1.ApiOperation)({ summary: 'Stripe webhook endpoint' }),

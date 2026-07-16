@@ -1,4 +1,4 @@
-import { Controller, Post, Param, UseGuards, Req, Headers } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, UseGuards, Req, Headers } from '@nestjs/common';
 import type { RawBodyRequest } from '@nestjs/common';
 import { ContractsService } from './contracts.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
@@ -10,6 +10,14 @@ import type { Request } from 'express';
 @Controller()
 export class ContractsController {
   constructor(private readonly contractsService: ContractsService) {}
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Get('contracts/me')
+  @ApiOperation({ summary: 'Get current user contracts' })
+  getMyContracts(@CurrentUser() user: any) {
+    return this.contractsService.getMyContracts(user.id);
+  }
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
@@ -33,6 +41,18 @@ export class ContractsController {
   @ApiOperation({ summary: 'Simulate funding a contract' })
   fundContract(@Param('id') id: string, @CurrentUser() user: any) {
     return this.contractsService.fundContract(id, user.id);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post('contracts/:id/submit')
+  @ApiOperation({ summary: 'Submit work for a contract' })
+  submitWork(
+    @Param('id') id: string,
+    @Body('submissionDetails') submissionDetails: string,
+    @CurrentUser() user: any,
+  ) {
+    return this.contractsService.submitWork(id, user.id, submissionDetails);
   }
 
   @Post('payments/webhook')

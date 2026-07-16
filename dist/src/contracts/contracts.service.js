@@ -67,8 +67,8 @@ let ContractsService = class ContractsService {
         if (!contract || contract.clientId !== clientId) {
             throw new common_1.ForbiddenException('Cannot access this contract or you are not the client');
         }
-        if (contract.status !== 'ACTIVE') {
-            throw new common_1.BadRequestException('Only ACTIVE contracts can be completed');
+        if (contract.status !== 'ACTIVE' && contract.status !== 'SUBMITTED') {
+            throw new common_1.BadRequestException('Only ACTIVE or SUBMITTED contracts can be completed');
         }
         return this.prisma.$transaction(async (tx) => {
             const updatedContract = await tx.contract.update({
@@ -103,6 +103,38 @@ let ContractsService = class ContractsService {
                 data: { status: 'IN_PROGRESS' },
             });
             return updated;
+        });
+    }
+    async getMyContracts(userId) {
+        return this.prisma.contract.findMany({
+            where: {
+                OR: [
+                    { clientId: userId },
+                    { freelancerId: userId },
+                ],
+            },
+            include: {
+                project: true,
+                proposal: {
+                    include: { freelancer: { select: { id: true, profile: true } } }
+                },
+            },
+            orderBy: { createdAt: 'desc' },
+        });
+    }
+    async submitWork(contractId, freelancerId, submissionDetails) {
+        const contract = await this.prisma.contract.findUnique({
+            where: { id: contractId },
+        });
+        if (!contract || contract.freelancerId !== freelancerId) {
+            throw new common_1.ForbiddenException('Cannot access this contract');
+        }
+        if (contract.status !== 'ACTIVE') {
+            throw new common_1.BadRequestException('Only ACTIVE contracts can be submitted');
+        }
+        return this.prisma.contract.update({
+            where: { id: contractId },
+            data: { status: 'SUBMITTED' },
         });
     }
     async handleStripeWebhook(signature, payload) {
