@@ -18,13 +18,19 @@ let ProjectsService = class ProjectsService {
         this.prisma = prisma;
     }
     async create(clientId, dto) {
-        return this.prisma.project.create({
-            data: {
-                ...dto,
-                clientId,
-                status: 'PUBLISHED',
-            },
-        });
+        try {
+            return await this.prisma.project.create({
+                data: {
+                    ...dto,
+                    clientId,
+                    status: 'PUBLISHED',
+                },
+            });
+        }
+        catch (error) {
+            console.error('Project Create Error:', error);
+            throw new common_1.BadRequestException(`Failed to create project: ${error.message || error}`);
+        }
     }
     async findAll(page = 1, limit = 10) {
         const skip = (page - 1) * limit;
@@ -37,6 +43,28 @@ let ProjectsService = class ProjectsService {
                 orderBy: { createdAt: 'desc' },
             }),
             this.prisma.project.count({ where: { status: 'PUBLISHED' } }),
+        ]);
+        return {
+            data,
+            meta: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            },
+        };
+    }
+    async findAllByClient(clientId, page = 1, limit = 10) {
+        const skip = (page - 1) * limit;
+        const [data, total] = await Promise.all([
+            this.prisma.project.findMany({
+                skip,
+                take: limit,
+                where: { clientId },
+                include: { proposals: true, client: { select: { id: true, profile: true } } },
+                orderBy: { createdAt: 'desc' },
+            }),
+            this.prisma.project.count({ where: { clientId } }),
         ]);
         return {
             data,

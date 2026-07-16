@@ -3,4 +3,5 @@ export declare class CreateProjectDto {
     description: string;
     budget: number;
     timeline?: string;
+    skills?: string[];
 }

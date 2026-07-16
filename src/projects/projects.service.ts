@@ -8,13 +8,18 @@ export class ProjectsService {
   constructor(private prisma: PrismaService) {}
 
   async create(clientId: string, dto: CreateProjectDto) {
-    return this.prisma.project.create({
-      data: {
-        ...dto,
-        clientId,
-        status: 'PUBLISHED',
-      },
-    });
+    try {
+      return await this.prisma.project.create({
+        data: {
+          ...dto,
+          clientId,
+          status: 'PUBLISHED',
+        },
+      });
+    } catch (error: any) {
+      console.error('Project Create Error:', error);
+      throw new BadRequestException(`Failed to create project: ${error.message || error}`);
+    }
   }
 
   async findAll(page: number = 1, limit: number = 10) {
@@ -28,6 +33,30 @@ export class ProjectsService {
         orderBy: { createdAt: 'desc' },
       }),
       this.prisma.project.count({ where: { status: 'PUBLISHED' } }),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  async findAllByClient(clientId: string, page: number = 1, limit: number = 10) {
+    const skip = (page - 1) * limit;
+    const [data, total] = await Promise.all([
+      this.prisma.project.findMany({
+        skip,
+        take: limit,
+        where: { clientId },
+        include: { proposals: true, client: { select: { id: true, profile: true } } },
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.project.count({ where: { clientId } }),
     ]);
 
     return {

@@ -29,6 +29,7 @@ export class UsersService {
         avatarUrl: data.avatarUrl,
         firstName: data.firstName,
         lastName: data.lastName,
+        hourlyRate: data.hourlyRate,
       },
     });
   }

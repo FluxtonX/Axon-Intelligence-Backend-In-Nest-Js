@@ -31,6 +31,9 @@ let ProjectsController = class ProjectsController {
     findAll(page, limit) {
         return this.projectsService.findAll(page ? +page : 1, limit ? +limit : 10);
     }
+    findMyProjects(user, page, limit) {
+        return this.projectsService.findAllByClient(user.id, page ? +page : 1, limit ? +limit : 10);
+    }
     findOne(id) {
         return this.projectsService.findOne(id);
     }
@@ -61,6 +64,20 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], ProjectsController.prototype, "findAll", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('me'),
+    (0, swagger_1.ApiOperation)({ summary: 'List projects created by current user' }),
+    (0, swagger_1.ApiQuery)({ name: 'page', required: false, type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'limit', required: false, type: Number }),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Query)('page')),
+    __param(2, (0, common_1.Query)('limit')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String]),
+    __metadata("design:returntype", void 0)
+], ProjectsController.prototype, "findMyProjects", null);
 __decorate([
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Get a specific project' }),

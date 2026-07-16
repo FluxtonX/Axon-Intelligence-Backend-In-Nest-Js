@@ -21,4 +21,9 @@ export class CreateProjectDto {
   @IsOptional()
   @IsString()
   timeline?: string;
+
+  @ApiPropertyOptional({ example: ['Flutter', 'Firebase'] })
+  @IsOptional()
+  @IsString({ each: true })
+  skills?: string[];
 }

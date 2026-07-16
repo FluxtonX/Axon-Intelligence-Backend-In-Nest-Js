@@ -17,6 +17,7 @@ class CreateProjectDto {
     description;
     budget;
     timeline;
+    skills;
 }
 exports.CreateProjectDto = CreateProjectDto;
 __decorate([
@@ -43,4 +44,10 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateProjectDto.prototype, "timeline", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: ['Flutter', 'Firebase'] }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)({ each: true }),
+    __metadata("design:type", Array)
+], CreateProjectDto.prototype, "skills", void 0);
 //# sourceMappingURL=create-project.dto.js.map

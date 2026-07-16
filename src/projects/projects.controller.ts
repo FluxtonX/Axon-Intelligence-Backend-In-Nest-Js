@@ -27,6 +27,16 @@ export class ProjectsController {
     return this.projectsService.findAll(page ? +page : 1, limit ? +limit : 10);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  @ApiOperation({ summary: 'List projects created by current user' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  findMyProjects(@CurrentUser() user: any, @Query('page') page?: string, @Query('limit') limit?: string) {
+    return this.projectsService.findAllByClient(user.id, page ? +page : 1, limit ? +limit : 10);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get a specific project' })
   findOne(@Param('id') id: string) {

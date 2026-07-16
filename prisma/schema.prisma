@@ -107,6 +107,7 @@ model Project {
   budget      Float
   timeline    String?
   status      ProjectStatus @default(DRAFT)
+  skills      String[]
   createdAt   DateTime      @default(now())
   proposals   Proposal[]
   contracts   Contract[]
