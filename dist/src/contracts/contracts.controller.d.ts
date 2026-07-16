@@ -86,6 +86,16 @@ export declare class ContractsController {
         status: import("@prisma/client").$Enums.ContractStatus;
         createdAt: Date;
     }>;
+    disputeContract(id: string, user: any): Promise<{
+        id: string;
+        proposalId: string | null;
+        projectId: string;
+        clientId: string;
+        freelancerId: string;
+        amount: number;
+        status: import("@prisma/client").$Enums.ContractStatus;
+        createdAt: Date;
+    }>;
     handleWebhook(signature: string, req: RawBodyRequest<Request>): Promise<{
         received: boolean;
     }>;

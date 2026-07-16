@@ -32,27 +32,32 @@ let ProjectsService = class ProjectsService {
             throw new common_1.BadRequestException(`Failed to create project: ${error.message || error}`);
         }
     }
-    async findAll(page = 1, limit = 10) {
-        const skip = (page - 1) * limit;
-        const [data, total] = await Promise.all([
+    async findAll(q, skip = 0, take = 20, minBudget, maxBudget) {
+        const where = { status: 'PUBLISHED' };
+        if (q) {
+            where.OR = [
+                { title: { contains: q, mode: 'insensitive' } },
+                { description: { contains: q, mode: 'insensitive' } },
+            ];
+        }
+        if (minBudget !== undefined || maxBudget !== undefined) {
+            where.budget = {};
+            if (minBudget !== undefined)
+                where.budget.gte = minBudget;
+            if (maxBudget !== undefined)
+                where.budget.lte = maxBudget;
+        }
+        const [projects, total] = await Promise.all([
             this.prisma.project.findMany({
+                where,
                 skip,
-                take: limit,
-                where: { status: 'PUBLISHED' },
+                take,
                 include: { client: { select: { id: true, profile: true } } },
                 orderBy: { createdAt: 'desc' },
             }),
-            this.prisma.project.count({ where: { status: 'PUBLISHED' } }),
+            this.prisma.project.count({ where }),
         ]);
-        return {
-            data,
-            meta: {
-                total,
-                page,
-                limit,
-                totalPages: Math.ceil(total / limit),
-            },
-        };
+        return { projects, total };
     }
     async findAllByClient(clientId, page = 1, limit = 10) {
         const skip = (page - 1) * limit;

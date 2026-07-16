@@ -25,28 +25,26 @@ let ServicesService = class ServicesService {
             },
         });
     }
-    async findAll(page = 1, limit = 10, category) {
-        const skip = (page - 1) * limit;
-        const whereClause = category ? { category } : {};
-        const [data, total] = await Promise.all([
+    async findAll(q, skip = 0, take = 20) {
+        const where = {};
+        if (q) {
+            where.OR = [
+                { title: { contains: q, mode: 'insensitive' } },
+                { description: { contains: q, mode: 'insensitive' } },
+                { category: { contains: q, mode: 'insensitive' } },
+            ];
+        }
+        const [services, total] = await Promise.all([
             this.prisma.service.findMany({
+                where,
                 skip,
-                take: limit,
-                where: whereClause,
+                take,
                 include: { freelancer: { select: { id: true, profile: true } } },
                 orderBy: { createdAt: 'desc' },
             }),
-            this.prisma.service.count({ where: whereClause }),
+            this.prisma.service.count({ where }),
         ]);
-        return {
-            data,
-            meta: {
-                total,
-                page,
-                limit,
-                totalPages: Math.ceil(total / limit),
-            },
-        };
+        return { services, total };
     }
     async findByFreelancer(freelancerId) {
         return this.prisma.service.findMany({

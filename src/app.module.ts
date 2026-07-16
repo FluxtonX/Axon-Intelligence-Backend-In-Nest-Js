@@ -16,6 +16,7 @@ import { DatabaseModule } from './database/database.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { WalletsModule } from './wallets/wallets.module';
 import { EmailModule } from './email/email.module';
+import { AdminModule } from './admin/admin.module';
 @Module({
   imports: [
     CommonModule,
@@ -32,6 +33,7 @@ import { EmailModule } from './email/email.module';
     ReviewsModule,
     WalletsModule,
     EmailModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [

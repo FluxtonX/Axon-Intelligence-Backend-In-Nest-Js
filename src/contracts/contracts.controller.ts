@@ -55,6 +55,14 @@ export class ContractsController {
     return this.contractsService.submitWork(id, user.id, submissionDetails);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post('contracts/:id/dispute')
+  @ApiOperation({ summary: 'Dispute a contract' })
+  disputeContract(@Param('id') id: string, @CurrentUser() user: any) {
+    return this.contractsService.disputeContract(id, user.id);
+  }
+
   @Post('payments/webhook')
   @ApiOperation({ summary: 'Stripe webhook endpoint' })
   async handleWebhook(

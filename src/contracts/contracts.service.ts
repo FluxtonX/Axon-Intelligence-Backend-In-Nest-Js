@@ -157,6 +157,25 @@ export class ContractsService {
     });
   }
 
+  async disputeContract(contractId: string, userId: string) {
+    const contract = await this.prisma.contract.findUnique({
+      where: { id: contractId },
+    });
+
+    if (!contract || (contract.clientId !== userId && contract.freelancerId !== userId)) {
+      throw new ForbiddenException('Cannot access this contract');
+    }
+
+    if (contract.status !== 'ACTIVE' && contract.status !== 'SUBMITTED') {
+      throw new BadRequestException('Only ACTIVE or SUBMITTED contracts can be disputed');
+    }
+
+    return this.prisma.contract.update({
+      where: { id: contractId },
+      data: { status: 'DISPUTED' },
+    });
+  }
+
   async handleStripeWebhook(signature: string, payload: Buffer) {
     let event;
     try {

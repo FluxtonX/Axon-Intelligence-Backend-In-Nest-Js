@@ -22,28 +22,40 @@ export class ProjectsService {
     }
   }
 
-  async findAll(page: number = 1, limit: number = 10) {
-    const skip = (page - 1) * limit;
-    const [data, total] = await Promise.all([
+  async findAll(
+    q?: string,
+    skip: number = 0,
+    take: number = 20,
+    minBudget?: number,
+    maxBudget?: number,
+  ) {
+    const where: any = { status: 'PUBLISHED' };
+
+    if (q) {
+      where.OR = [
+        { title: { contains: q, mode: 'insensitive' } },
+        { description: { contains: q, mode: 'insensitive' } },
+      ];
+    }
+
+    if (minBudget !== undefined || maxBudget !== undefined) {
+      where.budget = {};
+      if (minBudget !== undefined) where.budget.gte = minBudget;
+      if (maxBudget !== undefined) where.budget.lte = maxBudget;
+    }
+
+    const [projects, total] = await Promise.all([
       this.prisma.project.findMany({
+        where,
         skip,
-        take: limit,
-        where: { status: 'PUBLISHED' },
+        take,
         include: { client: { select: { id: true, profile: true } } },
         orderBy: { createdAt: 'desc' },
       }),
-      this.prisma.project.count({ where: { status: 'PUBLISHED' } }),
+      this.prisma.project.count({ where }),
     ]);
 
-    return {
-      data,
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
+    return { projects, total };
   }
 
   async findAllByClient(clientId: string, page: number = 1, limit: number = 10) {

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query, ParseIntPipe, DefaultValuePipe } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -20,11 +20,21 @@ export class ProjectsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'List published projects' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  findAll(@Query('page') page?: string, @Query('limit') limit?: string) {
-    return this.projectsService.findAll(page ? +page : 1, limit ? +limit : 10);
+  @ApiOperation({ summary: 'Get all published projects (with search and pagination)' })
+  findAll(
+    @Query('q') q?: string,
+    @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip?: number,
+    @Query('take', new DefaultValuePipe(20), ParseIntPipe) take?: number,
+    @Query('minBudget') minBudget?: string,
+    @Query('maxBudget') maxBudget?: string,
+  ) {
+    return this.projectsService.findAll(
+      q,
+      skip,
+      take,
+      minBudget ? parseFloat(minBudget) : undefined,
+      maxBudget ? parseFloat(maxBudget) : undefined,
+    );
   }
 
   @ApiBearerAuth()

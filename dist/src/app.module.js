@@ -25,6 +25,7 @@ const database_module_1 = require("./database/database.module");
 const reviews_module_1 = require("./reviews/reviews.module");
 const wallets_module_1 = require("./wallets/wallets.module");
 const email_module_1 = require("./email/email.module");
+const admin_module_1 = require("./admin/admin.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -45,6 +46,7 @@ exports.AppModule = AppModule = __decorate([
             reviews_module_1.ReviewsModule,
             wallets_module_1.WalletsModule,
             email_module_1.EmailModule,
+            admin_module_1.AdminModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

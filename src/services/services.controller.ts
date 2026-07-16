@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query, ParseIntPipe, DefaultValuePipe } from '@nestjs/common';
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
@@ -20,16 +20,16 @@ export class ServicesController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'List services for discover page' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'category', required: false, type: String })
+  @ApiOperation({ summary: 'List services' })
+  @ApiQuery({ name: 'q', required: false, type: String })
+  @ApiQuery({ name: 'skip', required: false, type: Number })
+  @ApiQuery({ name: 'take', required: false, type: Number })
   findAll(
-    @Query('page') page?: string, 
-    @Query('limit') limit?: string,
-    @Query('category') category?: string,
+    @Query('q') q?: string,
+    @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip?: number,
+    @Query('take', new DefaultValuePipe(20), ParseIntPipe) take?: number,
   ) {
-    return this.servicesService.findAll(page ? +page : 1, limit ? +limit : 10, category);
+    return this.servicesService.findAll(q, skip, take);
   }
 
   @ApiBearerAuth()

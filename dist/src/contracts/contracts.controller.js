@@ -38,6 +38,9 @@ let ContractsController = class ContractsController {
     submitWork(id, submissionDetails, user) {
         return this.contractsService.submitWork(id, user.id, submissionDetails);
     }
+    disputeContract(id, user) {
+        return this.contractsService.disputeContract(id, user.id);
+    }
     async handleWebhook(signature, req) {
         if (!signature || !req.rawBody) {
             return { received: true };
@@ -102,6 +105,17 @@ __decorate([
     __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", void 0)
 ], ContractsController.prototype, "submitWork", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('contracts/:id/dispute'),
+    (0, swagger_1.ApiOperation)({ summary: 'Dispute a contract' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], ContractsController.prototype, "disputeContract", null);
 __decorate([
     (0, common_1.Post)('payments/webhook'),
     (0, swagger_1.ApiOperation)({ summary: 'Stripe webhook endpoint' }),

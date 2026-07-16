@@ -87,5 +87,15 @@ export declare class ContractsService {
         status: import("@prisma/client").$Enums.ContractStatus;
         createdAt: Date;
     }>;
+    disputeContract(contractId: string, userId: string): Promise<{
+        id: string;
+        proposalId: string | null;
+        projectId: string;
+        clientId: string;
+        freelancerId: string;
+        amount: number;
+        status: import("@prisma/client").$Enums.ContractStatus;
+        createdAt: Date;
+    }>;
     handleStripeWebhook(signature: string, payload: Buffer): Promise<void>;
 }

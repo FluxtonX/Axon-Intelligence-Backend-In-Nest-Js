@@ -15,8 +15,8 @@ export declare class ProjectsController {
         createdAt: Date;
         clientId: string;
     }>;
-    findAll(page?: string, limit?: string): Promise<{
-        data: ({
+    findAll(q?: string, skip?: number, take?: number, minBudget?: string, maxBudget?: string): Promise<{
+        projects: ({
             client: {
                 id: string;
                 profile: {
@@ -44,12 +44,7 @@ export declare class ProjectsController {
             createdAt: Date;
             clientId: string;
         })[];
-        meta: {
-            total: number;
-            page: number;
-            limit: number;
-            totalPages: number;
-        };
+        total: number;
     }>;
     findMyProjects(user: any, page?: string, limit?: string): Promise<{
         data: ({

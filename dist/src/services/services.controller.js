@@ -28,8 +28,8 @@ let ServicesController = class ServicesController {
     create(user, createServiceDto) {
         return this.servicesService.create(user.id, createServiceDto);
     }
-    findAll(page, limit, category) {
-        return this.servicesService.findAll(page ? +page : 1, limit ? +limit : 10, category);
+    findAll(q, skip, take) {
+        return this.servicesService.findAll(q, skip, take);
     }
     findMyServices(user) {
         return this.servicesService.findByFreelancer(user.id);
@@ -52,15 +52,15 @@ __decorate([
 ], ServicesController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
-    (0, swagger_1.ApiOperation)({ summary: 'List services for discover page' }),
-    (0, swagger_1.ApiQuery)({ name: 'page', required: false, type: Number }),
-    (0, swagger_1.ApiQuery)({ name: 'limit', required: false, type: Number }),
-    (0, swagger_1.ApiQuery)({ name: 'category', required: false, type: String }),
-    __param(0, (0, common_1.Query)('page')),
-    __param(1, (0, common_1.Query)('limit')),
-    __param(2, (0, common_1.Query)('category')),
+    (0, swagger_1.ApiOperation)({ summary: 'List services' }),
+    (0, swagger_1.ApiQuery)({ name: 'q', required: false, type: String }),
+    (0, swagger_1.ApiQuery)({ name: 'skip', required: false, type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'take', required: false, type: Number }),
+    __param(0, (0, common_1.Query)('q')),
+    __param(1, (0, common_1.Query)('skip', new common_1.DefaultValuePipe(0), common_1.ParseIntPipe)),
+    __param(2, (0, common_1.Query)('take', new common_1.DefaultValuePipe(20), common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [String, Number, Number]),
     __metadata("design:returntype", void 0)
 ], ServicesController.prototype, "findAll", null);
 __decorate([

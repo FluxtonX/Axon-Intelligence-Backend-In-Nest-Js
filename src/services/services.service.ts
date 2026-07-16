@@ -16,31 +16,28 @@ export class ServicesService {
     });
   }
 
-  async findAll(page: number = 1, limit: number = 10, category?: string) {
-    const skip = (page - 1) * limit;
-    
-    const whereClause = category ? { category } : {};
+  async findAll(q?: string, skip: number = 0, take: number = 20) {
+    const where: any = {};
+    if (q) {
+      where.OR = [
+        { title: { contains: q, mode: 'insensitive' } },
+        { description: { contains: q, mode: 'insensitive' } },
+        { category: { contains: q, mode: 'insensitive' } },
+      ];
+    }
 
-    const [data, total] = await Promise.all([
+    const [services, total] = await Promise.all([
       this.prisma.service.findMany({
+        where,
         skip,
-        take: limit,
-        where: whereClause,
+        take,
         include: { freelancer: { select: { id: true, profile: true } } },
         orderBy: { createdAt: 'desc' },
       }),
-      this.prisma.service.count({ where: whereClause }),
+      this.prisma.service.count({ where }),
     ]);
 
-    return {
-      data,
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
+    return { services, total };
   }
 
   async findByFreelancer(freelancerId: string) {
