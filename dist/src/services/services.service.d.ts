@@ -9,11 +9,11 @@ export declare class ServicesService {
         title: string;
         id: string;
         createdAt: Date;
-        freelancerId: string;
-        deliveryDays: number;
         category: string;
         price: number;
+        deliveryDays: number;
         imageUrl: string | null;
+        freelancerId: string;
     }>;
     findAll(page?: number, limit?: number, category?: string): Promise<{
         data: ({
@@ -38,11 +38,11 @@ export declare class ServicesService {
             title: string;
             id: string;
             createdAt: Date;
-            freelancerId: string;
-            deliveryDays: number;
             category: string;
             price: number;
+            deliveryDays: number;
             imageUrl: string | null;
+            freelancerId: string;
         })[];
         meta: {
             total: number;
@@ -56,21 +56,21 @@ export declare class ServicesService {
         title: string;
         id: string;
         createdAt: Date;
-        freelancerId: string;
-        deliveryDays: number;
         category: string;
         price: number;
+        deliveryDays: number;
         imageUrl: string | null;
+        freelancerId: string;
     }[]>;
     update(id: string, freelancerId: string, dto: UpdateServiceDto): Promise<{
         description: string;
         title: string;
         id: string;
         createdAt: Date;
-        freelancerId: string;
-        deliveryDays: number;
         category: string;
         price: number;
+        deliveryDays: number;
         imageUrl: string | null;
+        freelancerId: string;
     }>;
 }

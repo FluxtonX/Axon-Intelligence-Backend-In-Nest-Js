@@ -7,6 +7,7 @@ import { LoginDto } from './dto/login.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { OAuth2Client } from 'google-auth-library';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +15,8 @@ export class AuthService {
 
   constructor(
     private prisma: PrismaService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private emailService: EmailService
   ) {}
 
   async register(dto: RegisterDto) {
@@ -142,7 +144,8 @@ export class AuthService {
       }
     });
     
-    console.log(`\n\n=== PASSWORD RESET CODE ===\nEmail: ${user.email}\nCode: ${resetCode}\n===========================\n\n`);
+    // Send actual email using EmailService
+    await this.emailService.sendPasswordResetEmail(user.email, resetCode);
     
     return { message: 'If that email is in our system, we have sent a reset code.' };
   }

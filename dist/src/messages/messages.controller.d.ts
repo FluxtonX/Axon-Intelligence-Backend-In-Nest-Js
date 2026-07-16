@@ -1,0 +1,30 @@
+import { MessagesService } from './messages.service';
+export declare class MessagesController {
+    private readonly messagesService;
+    constructor(messagesService: MessagesService);
+    getConversation(req: any, otherUserId: string, page: number, limit: number): Promise<{
+        data: {
+            id: string;
+            createdAt: Date;
+            content: string;
+            read: boolean;
+            senderId: string;
+            receiverId: string;
+        }[];
+        meta: {
+            total: number;
+            page: number;
+            limit: number;
+            totalPages: number;
+        };
+    }>;
+    getUnreadCount(req: any): Promise<number>;
+    markAsRead(req: any, id: string): Promise<{
+        id: string;
+        createdAt: Date;
+        content: string;
+        read: boolean;
+        senderId: string;
+        receiverId: string;
+    }>;
+}

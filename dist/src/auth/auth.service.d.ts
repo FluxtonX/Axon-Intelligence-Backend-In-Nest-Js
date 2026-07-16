@@ -4,11 +4,13 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { EmailService } from '../email/email.service';
 export declare class AuthService {
     private prisma;
     private jwtService;
+    private emailService;
     private googleClient;
-    constructor(prisma: PrismaService, jwtService: JwtService);
+    constructor(prisma: PrismaService, jwtService: JwtService, emailService: EmailService);
     register(dto: RegisterDto): Promise<{
         accessToken: string;
         refreshToken: string;

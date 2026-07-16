@@ -9,6 +9,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MessagesModule = void 0;
 const common_1 = require("@nestjs/common");
 const messages_gateway_1 = require("./messages.gateway");
+const messages_controller_1 = require("./messages.controller");
+const messages_service_1 = require("./messages.service");
 const database_module_1 = require("../database/database.module");
 let MessagesModule = class MessagesModule {
 };
@@ -16,7 +18,8 @@ exports.MessagesModule = MessagesModule;
 exports.MessagesModule = MessagesModule = __decorate([
     (0, common_1.Module)({
         imports: [database_module_1.DatabaseModule],
-        providers: [messages_gateway_1.MessagesGateway],
+        controllers: [messages_controller_1.MessagesController],
+        providers: [messages_gateway_1.MessagesGateway, messages_service_1.MessagesService],
     })
 ], MessagesModule);
 //# sourceMappingURL=messages.module.js.map

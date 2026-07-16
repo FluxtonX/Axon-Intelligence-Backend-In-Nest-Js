@@ -55,9 +55,9 @@ export declare class ProjectsService {
             id: string;
             createdAt: Date;
             status: import("@prisma/client").$Enums.ProposalStatus;
+            deliveryDays: number;
             freelancerId: string;
             bidAmount: number;
-            deliveryDays: number;
             coverLetter: string;
         }[];
         client: {

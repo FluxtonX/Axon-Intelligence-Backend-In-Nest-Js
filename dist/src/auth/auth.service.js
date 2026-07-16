@@ -48,13 +48,16 @@ const prisma_service_1 = require("../database/prisma.service");
 const jwt_1 = require("@nestjs/jwt");
 const bcrypt = __importStar(require("bcrypt"));
 const google_auth_library_1 = require("google-auth-library");
+const email_service_1 = require("../email/email.service");
 let AuthService = class AuthService {
     prisma;
     jwtService;
+    emailService;
     googleClient = new google_auth_library_1.OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-    constructor(prisma, jwtService) {
+    constructor(prisma, jwtService, emailService) {
         this.prisma = prisma;
         this.jwtService = jwtService;
+        this.emailService = emailService;
     }
     async register(dto) {
         dto.email = dto.email.toLowerCase().trim();
@@ -161,7 +164,7 @@ let AuthService = class AuthService {
                 expiresAt: new Date(Date.now() + 15 * 60 * 1000)
             }
         });
-        console.log(`\n\n=== PASSWORD RESET CODE ===\nEmail: ${user.email}\nCode: ${resetCode}\n===========================\n\n`);
+        await this.emailService.sendPasswordResetEmail(user.email, resetCode);
         return { message: 'If that email is in our system, we have sent a reset code.' };
     }
     async resetPassword(dto) {
@@ -200,6 +203,7 @@ exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        jwt_1.JwtService])
+        jwt_1.JwtService,
+        email_service_1.EmailService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

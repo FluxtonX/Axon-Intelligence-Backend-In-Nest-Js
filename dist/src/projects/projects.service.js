@@ -63,7 +63,7 @@ let ProjectsService = class ProjectsService {
             throw new common_1.NotFoundException('Project not found or unauthorized');
         }
         if (project.status === 'IN_PROGRESS') {
-            throw new Error('Cannot update an in-progress project');
+            throw new common_1.BadRequestException('Cannot update an in-progress project');
         }
         return this.prisma.project.update({
             where: { id },
