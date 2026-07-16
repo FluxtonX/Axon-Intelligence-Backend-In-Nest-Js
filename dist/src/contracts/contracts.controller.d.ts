@@ -8,14 +8,24 @@ export declare class ContractsController {
         url: string | null;
     }>;
     completeContract(id: string, user: any): Promise<{
-        clientId: string;
-        projectId: string;
         id: string;
-        createdAt: Date;
-        status: import("@prisma/client").$Enums.ContractStatus;
+        proposalId: string | null;
+        projectId: string;
+        clientId: string;
         freelancerId: string;
         amount: number;
+        status: import("@prisma/client").$Enums.ContractStatus;
+        createdAt: Date;
+    }>;
+    fundContract(id: string, user: any): Promise<{
+        id: string;
         proposalId: string | null;
+        projectId: string;
+        clientId: string;
+        freelancerId: string;
+        amount: number;
+        status: import("@prisma/client").$Enums.ContractStatus;
+        createdAt: Date;
     }>;
     handleWebhook(signature: string, req: RawBodyRequest<Request>): Promise<{
         received: boolean;

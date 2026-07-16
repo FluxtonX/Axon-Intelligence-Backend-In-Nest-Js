@@ -29,6 +29,9 @@ let ContractsController = class ContractsController {
     completeContract(id, user) {
         return this.contractsService.completeContract(id, user.id);
     }
+    fundContract(id, user) {
+        return this.contractsService.fundContract(id, user.id);
+    }
     async handleWebhook(signature, req) {
         if (!signature || !req.rawBody) {
             return { received: true };
@@ -60,6 +63,17 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], ContractsController.prototype, "completeContract", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('contracts/:id/fund'),
+    (0, swagger_1.ApiOperation)({ summary: 'Simulate funding a contract' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], ContractsController.prototype, "fundContract", null);
 __decorate([
     (0, common_1.Post)('payments/webhook'),
     (0, swagger_1.ApiOperation)({ summary: 'Stripe webhook endpoint' }),

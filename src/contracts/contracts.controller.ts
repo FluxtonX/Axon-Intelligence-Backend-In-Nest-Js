@@ -27,6 +27,14 @@ export class ContractsController {
     return this.contractsService.completeContract(id, user.id);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post('contracts/:id/fund')
+  @ApiOperation({ summary: 'Simulate funding a contract' })
+  fundContract(@Param('id') id: string, @CurrentUser() user: any) {
+    return this.contractsService.fundContract(id, user.id);
+  }
+
   @Post('payments/webhook')
   @ApiOperation({ summary: 'Stripe webhook endpoint' })
   async handleWebhook(

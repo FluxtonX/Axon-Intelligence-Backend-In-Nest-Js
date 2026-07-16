@@ -83,6 +83,28 @@ let ContractsService = class ContractsService {
             return updatedContract;
         });
     }
+    async fundContract(contractId, clientId) {
+        const contract = await this.prisma.contract.findUnique({
+            where: { id: contractId },
+        });
+        if (!contract || contract.clientId !== clientId) {
+            throw new common_1.ForbiddenException('Cannot access this contract');
+        }
+        if (contract.status !== 'PENDING_PAYMENT') {
+            throw new common_1.BadRequestException('Contract is already active or paid');
+        }
+        return this.prisma.$transaction(async (tx) => {
+            const updated = await tx.contract.update({
+                where: { id: contractId },
+                data: { status: 'ACTIVE' },
+            });
+            await tx.project.update({
+                where: { id: contract.projectId },
+                data: { status: 'IN_PROGRESS' },
+            });
+            return updated;
+        });
+    }
     async handleStripeWebhook(signature, payload) {
         let event;
         try {

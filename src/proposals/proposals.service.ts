@@ -68,7 +68,7 @@ export class ProposalsService {
       });
 
       // Create a pending contract
-      await tx.contract.create({
+      const contract = await tx.contract.create({
         data: {
           proposalId: proposal.id,
           projectId: proposal.projectId,
@@ -79,7 +79,7 @@ export class ProposalsService {
         },
       });
 
-      return accepted;
+      return contract;
     });
   }
 }

@@ -9,14 +9,24 @@ export declare class ContractsService {
         url: string | null;
     }>;
     completeContract(contractId: string, clientId: string): Promise<{
-        clientId: string;
-        projectId: string;
         id: string;
-        createdAt: Date;
-        status: import("@prisma/client").$Enums.ContractStatus;
+        proposalId: string | null;
+        projectId: string;
+        clientId: string;
         freelancerId: string;
         amount: number;
+        status: import("@prisma/client").$Enums.ContractStatus;
+        createdAt: Date;
+    }>;
+    fundContract(contractId: string, clientId: string): Promise<{
+        id: string;
         proposalId: string | null;
+        projectId: string;
+        clientId: string;
+        freelancerId: string;
+        amount: number;
+        status: import("@prisma/client").$Enums.ContractStatus;
+        createdAt: Date;
     }>;
     handleStripeWebhook(signature: string, payload: Buffer): Promise<void>;
 }

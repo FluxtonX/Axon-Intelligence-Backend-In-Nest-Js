@@ -65,7 +65,7 @@ let ProposalsService = class ProposalsService {
                 where: { projectId: proposal.projectId, id: { not: id } },
                 data: { status: 'REJECTED' },
             });
-            await tx.contract.create({
+            const contract = await tx.contract.create({
                 data: {
                     proposalId: proposal.id,
                     projectId: proposal.projectId,
@@ -75,7 +75,7 @@ let ProposalsService = class ProposalsService {
                     status: 'PENDING_PAYMENT',
                 },
             });
-            return accepted;
+            return contract;
         });
     }
 };
