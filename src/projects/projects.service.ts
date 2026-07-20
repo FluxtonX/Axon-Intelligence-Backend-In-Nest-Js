@@ -112,7 +112,7 @@ export class ProjectsService {
     let text = '';
     let options: string[] | undefined = undefined;
     let status = 'waitingForInput';
-    let generatedBrief = undefined;
+    let generatedBrief: any = undefined;
 
     if (step === 0) {
       text = "Got it! What's your estimated budget for this project?";

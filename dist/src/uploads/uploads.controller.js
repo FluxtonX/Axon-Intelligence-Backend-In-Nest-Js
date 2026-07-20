@@ -14,6 +14,10 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UploadsController = exports.PresignedUrlDto = void 0;
 const common_1 = require("@nestjs/common");
+const platform_express_1 = require("@nestjs/platform-express");
+const multer_1 = require("multer");
+const path_1 = require("path");
+const uuid_1 = require("uuid");
 const uploads_service_1 = require("./uploads.service");
 const jwt_auth_guard_1 = require("../common/guards/jwt-auth.guard");
 const swagger_1 = require("@nestjs/swagger");
@@ -43,6 +47,16 @@ let UploadsController = class UploadsController {
     getPresignedUrl(dto) {
         return this.uploadsService.getPresignedUrl(dto.filename, dto.contentType);
     }
+    uploadFileLocally(file, req) {
+        const protocol = req.protocol;
+        const host = req.get('host');
+        const publicUrl = `${protocol}://${host}/uploads/${file.filename}`;
+        return {
+            uploadUrl: publicUrl,
+            publicUrl: publicUrl,
+            key: file.filename,
+        };
+    }
 };
 exports.UploadsController = UploadsController;
 __decorate([
@@ -53,6 +67,24 @@ __decorate([
     __metadata("design:paramtypes", [PresignedUrlDto]),
     __metadata("design:returntype", void 0)
 ], UploadsController.prototype, "getPresignedUrl", null);
+__decorate([
+    (0, common_1.Post)('local'),
+    (0, swagger_1.ApiOperation)({ summary: 'Upload file locally for development' }),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
+        storage: (0, multer_1.diskStorage)({
+            destination: './uploads',
+            filename: (req, file, cb) => {
+                const uniqueSuffix = (0, uuid_1.v4)();
+                cb(null, `${uniqueSuffix}${(0, path_1.extname)(file.originalname)}`);
+            }
+        })
+    })),
+    __param(0, (0, common_1.UploadedFile)()),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], UploadsController.prototype, "uploadFileLocally", null);
 exports.UploadsController = UploadsController = __decorate([
     (0, swagger_1.ApiTags)('uploads'),
     (0, swagger_1.ApiBearerAuth)(),

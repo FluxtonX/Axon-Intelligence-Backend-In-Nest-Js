@@ -8,6 +8,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
+const serve_static_1 = require("@nestjs/serve-static");
+const path_1 = require("path");
 const all_exceptions_filter_1 = require("./common/filters/all-exceptions.filter");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
@@ -47,6 +49,10 @@ exports.AppModule = AppModule = __decorate([
             wallets_module_1.WalletsModule,
             email_module_1.EmailModule,
             admin_module_1.AdminModule,
+            serve_static_1.ServeStaticModule.forRoot({
+                rootPath: (0, path_1.join)(process.cwd(), 'uploads'),
+                serveRoot: '/uploads',
+            }),
         ],
         controllers: [app_controller_1.AppController],
         providers: [

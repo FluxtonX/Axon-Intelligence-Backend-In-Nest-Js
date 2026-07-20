@@ -5,18 +5,18 @@ export declare class MessagesController {
     getConversations(req: any): Promise<any[]>;
     sendMessage(req: any, receiverId: string, content: string): Promise<{
         id: string;
+        createdAt: Date;
         content: string;
         read: boolean;
-        createdAt: Date;
         senderId: string;
         receiverId: string;
     }>;
     getConversation(req: any, otherUserId: string, page: number, limit: number): Promise<{
         data: {
             id: string;
+            createdAt: Date;
             content: string;
             read: boolean;
-            createdAt: Date;
             senderId: string;
             receiverId: string;
         }[];
@@ -30,9 +30,9 @@ export declare class MessagesController {
     getUnreadCount(req: any): Promise<number>;
     markAsRead(req: any, id: string): Promise<{
         id: string;
+        createdAt: Date;
         content: string;
         read: boolean;
-        createdAt: Date;
         senderId: string;
         receiverId: string;
     }>;

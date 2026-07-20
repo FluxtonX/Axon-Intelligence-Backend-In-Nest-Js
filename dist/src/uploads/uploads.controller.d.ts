@@ -11,4 +11,9 @@ export declare class UploadsController {
         key: string;
         publicUrl: string;
     }>;
+    uploadFileLocally(file: Express.Multer.File, req: any): {
+        uploadUrl: string;
+        publicUrl: string;
+        key: string;
+    };
 }
