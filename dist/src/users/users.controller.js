@@ -29,6 +29,9 @@ let UsersController = class UsersController {
     updateProfile(user, updateData) {
         return this.usersService.updateProfile(user.id, updateData);
     }
+    searchFreelancers(q, skip, take, maxHourlyRate) {
+        return this.usersService.searchFreelancers(q, skip ? parseInt(skip, 10) : 0, take ? parseInt(take, 10) : 20, maxHourlyRate ? parseFloat(maxHourlyRate) : undefined);
+    }
 };
 exports.UsersController = UsersController;
 __decorate([
@@ -48,6 +51,17 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "updateProfile", null);
+__decorate([
+    (0, common_1.Get)('freelancers'),
+    (0, swagger_1.ApiOperation)({ summary: 'Search for freelancers' }),
+    __param(0, (0, common_1.Query)('q')),
+    __param(1, (0, common_1.Query)('skip')),
+    __param(2, (0, common_1.Query)('take')),
+    __param(3, (0, common_1.Query)('maxHourlyRate')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String, String]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "searchFreelancers", null);
 exports.UsersController = UsersController = __decorate([
     (0, swagger_1.ApiTags)('users'),
     (0, swagger_1.ApiBearerAuth)(),

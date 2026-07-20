@@ -102,7 +102,13 @@ export class ContractsService {
       throw new BadRequestException('Contract is already active or paid');
     }
 
-    // Simulate payment by directly activating the contract
+    // 1. Auto-deposit to simulate a successful payment processing for now
+    await this.walletsService.deposit(clientId, contract.amount);
+    
+    // 2. Lock the amount into Escrow
+    await this.walletsService.lockEscrow(clientId, contract.amount, contract.id);
+
+    // 3. Mark the contract as ACTIVE
     return this.prisma.$transaction(async (tx) => {
       const updated = await tx.contract.update({
         where: { id: contractId },

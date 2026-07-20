@@ -141,4 +141,10 @@ export declare class ProjectsService {
         createdAt: Date;
         clientId: string;
     }>;
+    handleAiChat(step: number, message: string): Promise<{
+        text: string;
+        options: string[] | undefined;
+        status: string;
+        generatedBrief: undefined;
+    }>;
 }

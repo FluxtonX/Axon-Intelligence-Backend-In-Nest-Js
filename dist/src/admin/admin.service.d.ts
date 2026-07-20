@@ -7,37 +7,39 @@ export declare class AdminService {
     getUsers(skip?: number, take?: number): Promise<{
         users: ({
             profile: {
-                id: string;
-                userId: string;
+                title: string | null;
                 firstName: string;
                 lastName: string;
+                id: string;
                 avatarUrl: string | null;
                 bio: string | null;
-                title: string | null;
                 hourlyRate: number | null;
                 skills: string[];
                 averageRating: number | null;
                 totalReviews: number;
+                userId: string;
             } | null;
         } & {
-            id: string;
             email: string;
-            passwordHash: string | null;
+            id: string;
             googleId: string | null;
+            passwordHash: string | null;
             authProvider: string;
             role: import("@prisma/client").$Enums.Role;
+            isSuspended: boolean;
             createdAt: Date;
             updatedAt: Date;
         })[];
         total: number;
     }>;
     suspendUser(userId: string, isSuspended: boolean): Promise<{
-        id: string;
         email: string;
-        passwordHash: string | null;
+        id: string;
         googleId: string | null;
+        passwordHash: string | null;
         authProvider: string;
         role: import("@prisma/client").$Enums.Role;
+        isSuspended: boolean;
         createdAt: Date;
         updatedAt: Date;
     }>;
@@ -48,13 +50,13 @@ export declare class AdminService {
         totalTransactions: number;
     }>;
     resolveDispute(contractId: string, refundClientPercentage: number): Promise<{
+        clientId: string;
+        projectId: string;
         id: string;
         createdAt: Date;
         status: import("@prisma/client").$Enums.ContractStatus;
-        proposalId: string | null;
-        projectId: string;
-        clientId: string;
         freelancerId: string;
         amount: number;
+        proposalId: string | null;
     }>;
 }

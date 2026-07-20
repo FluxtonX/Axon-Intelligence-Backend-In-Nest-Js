@@ -9,93 +9,93 @@ export declare class ContractsService {
         url: string | null;
     }>;
     completeContract(contractId: string, clientId: string): Promise<{
-        id: string;
-        proposalId: string | null;
-        projectId: string;
         clientId: string;
+        projectId: string;
+        id: string;
+        createdAt: Date;
+        status: import("@prisma/client").$Enums.ContractStatus;
         freelancerId: string;
         amount: number;
-        status: import("@prisma/client").$Enums.ContractStatus;
-        createdAt: Date;
+        proposalId: string | null;
     }>;
     fundContract(contractId: string, clientId: string): Promise<{
-        id: string;
-        proposalId: string | null;
-        projectId: string;
         clientId: string;
+        projectId: string;
+        id: string;
+        createdAt: Date;
+        status: import("@prisma/client").$Enums.ContractStatus;
         freelancerId: string;
         amount: number;
-        status: import("@prisma/client").$Enums.ContractStatus;
-        createdAt: Date;
+        proposalId: string | null;
     }>;
     getMyContracts(userId: string): Promise<({
         project: {
-            id: string;
-            clientId: string;
-            status: import("@prisma/client").$Enums.ProjectStatus;
-            createdAt: Date;
-            title: string;
             description: string;
+            title: string;
+            clientId: string;
+            id: string;
+            createdAt: Date;
+            skills: string[];
             budget: number;
             timeline: string | null;
-            skills: string[];
+            status: import("@prisma/client").$Enums.ProjectStatus;
         };
         proposal: ({
             freelancer: {
                 profile: {
-                    id: string;
                     title: string | null;
-                    skills: string[];
-                    userId: string;
                     firstName: string;
                     lastName: string;
+                    id: string;
                     avatarUrl: string | null;
                     bio: string | null;
                     hourlyRate: number | null;
+                    skills: string[];
                     averageRating: number | null;
                     totalReviews: number;
+                    userId: string;
                 } | null;
                 id: string;
             };
         } & {
-            id: string;
             projectId: string;
-            freelancerId: string;
-            status: import("@prisma/client").$Enums.ProposalStatus;
+            id: string;
             createdAt: Date;
+            status: import("@prisma/client").$Enums.ProposalStatus;
+            freelancerId: string;
             bidAmount: number;
             deliveryDays: number;
             coverLetter: string;
         }) | null;
     } & {
-        id: string;
-        proposalId: string | null;
-        projectId: string;
         clientId: string;
+        projectId: string;
+        id: string;
+        createdAt: Date;
+        status: import("@prisma/client").$Enums.ContractStatus;
         freelancerId: string;
         amount: number;
-        status: import("@prisma/client").$Enums.ContractStatus;
-        createdAt: Date;
+        proposalId: string | null;
     })[]>;
     submitWork(contractId: string, freelancerId: string, submissionDetails: string): Promise<{
-        id: string;
-        proposalId: string | null;
-        projectId: string;
         clientId: string;
+        projectId: string;
+        id: string;
+        createdAt: Date;
+        status: import("@prisma/client").$Enums.ContractStatus;
         freelancerId: string;
         amount: number;
-        status: import("@prisma/client").$Enums.ContractStatus;
-        createdAt: Date;
+        proposalId: string | null;
     }>;
     disputeContract(contractId: string, userId: string): Promise<{
-        id: string;
-        proposalId: string | null;
-        projectId: string;
         clientId: string;
+        projectId: string;
+        id: string;
+        createdAt: Date;
+        status: import("@prisma/client").$Enums.ContractStatus;
         freelancerId: string;
         amount: number;
-        status: import("@prisma/client").$Enums.ContractStatus;
-        createdAt: Date;
+        proposalId: string | null;
     }>;
     handleStripeWebhook(signature: string, payload: Buffer): Promise<void>;
 }

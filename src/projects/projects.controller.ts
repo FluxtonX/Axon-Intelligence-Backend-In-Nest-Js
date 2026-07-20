@@ -19,6 +19,14 @@ export class ProjectsController {
     return this.projectsService.create(user.id, createProjectDto);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post('ai/chat')
+  @ApiOperation({ summary: 'Chat with AI to generate a project brief' })
+  handleAiChat(@Body('step') step: number, @Body('message') message: string) {
+    return this.projectsService.handleAiChat(step, message);
+  }
+
   @Get()
   @ApiOperation({ summary: 'Get all published projects (with search and pagination)' })
   findAll(

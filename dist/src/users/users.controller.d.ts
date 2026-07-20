@@ -4,37 +4,66 @@ export declare class UsersController {
     constructor(usersService: UsersService);
     getProfile(user: any): Promise<{
         profile: {
-            title: string | null;
+            id: string;
+            userId: string;
             firstName: string;
             lastName: string;
-            id: string;
             avatarUrl: string | null;
             bio: string | null;
+            title: string | null;
             hourlyRate: number | null;
             skills: string[];
             averageRating: number | null;
             totalReviews: number;
-            userId: string;
         } | null;
-        email: string;
         id: string;
+        email: string;
         googleId: string | null;
         authProvider: string;
         role: import("@prisma/client").$Enums.Role;
+        isSuspended: boolean;
         createdAt: Date;
         updatedAt: Date;
     }>;
     updateProfile(user: any, updateData: any): Promise<{
-        title: string | null;
+        id: string;
+        userId: string;
         firstName: string;
         lastName: string;
-        id: string;
         avatarUrl: string | null;
         bio: string | null;
+        title: string | null;
         hourlyRate: number | null;
         skills: string[];
         averageRating: number | null;
         totalReviews: number;
-        userId: string;
+    }>;
+    searchFreelancers(q?: string, skip?: string, take?: string, maxHourlyRate?: string): Promise<{
+        data: {
+            profile: {
+                id: string;
+                userId: string;
+                firstName: string;
+                lastName: string;
+                avatarUrl: string | null;
+                bio: string | null;
+                title: string | null;
+                hourlyRate: number | null;
+                skills: string[];
+                averageRating: number | null;
+                totalReviews: number;
+            } | null;
+            id: string;
+            email: string;
+            googleId: string | null;
+            authProvider: string;
+            role: import("@prisma/client").$Enums.Role;
+            isSuspended: boolean;
+            createdAt: Date;
+            updatedAt: Date;
+        }[];
+        total: number;
+        skip: number;
+        take: number;
     }>;
 }

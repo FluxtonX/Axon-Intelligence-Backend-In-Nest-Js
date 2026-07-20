@@ -106,4 +106,35 @@ export class ProjectsService {
       data: dto,
     });
   }
+
+  async handleAiChat(step: number, message: string) {
+    // Simulated AI Backend Logic
+    let text = '';
+    let options: string[] | undefined = undefined;
+    let status = 'waitingForInput';
+    let generatedBrief = undefined;
+
+    if (step === 0) {
+      text = "Got it! What's your estimated budget for this project?";
+      options = ["<$500", "$500 - $2000", "$2000+"];
+    } else if (step === 1) {
+      text = "Understood. When do you need this delivered?";
+      options = ["ASAP", "1 Week", "1 Month"];
+    } else if (step === 2) {
+      text = "Perfect. Any specific skills or frameworks the freelancer must know? (e.g., Flutter, Node.js)";
+      options = ["Flutter & Firebase", "React Native", "Native iOS/Android", "Not sure, you decide"];
+    } else {
+      status = 'complete';
+      text = "Your project brief has been generated successfully.";
+      generatedBrief = {
+        title: "New AI Generated Project",
+        description: "Based on our conversation, you need a high-quality application with a quick turnaround. Requirements have been scoped and finalized.",
+        budget: 1500,
+        timeline: "1 Week",
+        skills: ["Flutter", "Node.js", "Firebase"]
+      };
+    }
+
+    return { text, options, status, generatedBrief };
+  }
 }

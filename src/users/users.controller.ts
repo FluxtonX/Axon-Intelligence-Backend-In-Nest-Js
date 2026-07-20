@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Patch, Body, UseGuards, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
@@ -21,5 +21,21 @@ export class UsersController {
   @ApiOperation({ summary: 'Update current user profile' })
   updateProfile(@CurrentUser() user: any, @Body() updateData: any) {
     return this.usersService.updateProfile(user.id, updateData);
+  }
+
+  @Get('freelancers')
+  @ApiOperation({ summary: 'Search for freelancers' })
+  searchFreelancers(
+    @Query('q') q?: string,
+    @Query('skip') skip?: string,
+    @Query('take') take?: string,
+    @Query('maxHourlyRate') maxHourlyRate?: string,
+  ) {
+    return this.usersService.searchFreelancers(
+      q,
+      skip ? parseInt(skip, 10) : 0,
+      take ? parseInt(take, 10) : 20,
+      maxHourlyRate ? parseFloat(maxHourlyRate) : undefined,
+    );
   }
 }

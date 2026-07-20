@@ -5,6 +5,16 @@ import { PrismaService } from '../database/prisma.service';
 export class MessagesService {
   constructor(private prisma: PrismaService) {}
 
+  async sendMessage(senderId: string, receiverId: string, content: string) {
+    return this.prisma.message.create({
+      data: {
+        senderId,
+        receiverId,
+        content,
+      },
+    });
+  }
+
   async getConversation(userId1: string, userId2: string, page: number = 1, limit: number = 20) {
     const skip = (page - 1) * limit;
 
@@ -65,5 +75,40 @@ export class MessagesService {
       where: { id: messageId },
       data: { read: true },
     });
+  }
+
+  async getConversations(userId: string) {
+    const messages = await this.prisma.message.findMany({
+      where: {
+        OR: [
+          { senderId: userId },
+          { receiverId: userId },
+        ],
+      },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        sender: { select: { id: true, profile: true } },
+        receiver: { select: { id: true, profile: true } },
+      },
+    });
+
+    const conversationsMap = new Map();
+
+    for (const msg of messages) {
+      const otherUser = msg.senderId === userId ? msg.receiver : msg.sender;
+      if (!conversationsMap.has(otherUser.id)) {
+        conversationsMap.set(otherUser.id, {
+          user: otherUser,
+          lastMessage: msg,
+          unreadCount: 0,
+        });
+      }
+      
+      if (msg.receiverId === userId && !msg.read) {
+        conversationsMap.get(otherUser.id).unreadCount += 1;
+      }
+    }
+
+    return Array.from(conversationsMap.values());
   }
 }

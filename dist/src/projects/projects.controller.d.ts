@@ -15,6 +15,12 @@ export declare class ProjectsController {
         createdAt: Date;
         clientId: string;
     }>;
+    handleAiChat(step: number, message: string): Promise<{
+        text: string;
+        options: string[] | undefined;
+        status: string;
+        generatedBrief: undefined;
+    }>;
     findAll(q?: string, skip?: number, take?: number, minBudget?: string, maxBudget?: string): Promise<{
         projects: ({
             client: {

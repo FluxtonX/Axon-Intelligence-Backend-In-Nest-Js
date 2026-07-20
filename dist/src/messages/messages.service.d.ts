@@ -2,6 +2,14 @@ import { PrismaService } from '../database/prisma.service';
 export declare class MessagesService {
     private prisma;
     constructor(prisma: PrismaService);
+    sendMessage(senderId: string, receiverId: string, content: string): Promise<{
+        id: string;
+        createdAt: Date;
+        content: string;
+        read: boolean;
+        senderId: string;
+        receiverId: string;
+    }>;
     getConversation(userId1: string, userId2: string, page?: number, limit?: number): Promise<{
         data: {
             id: string;
@@ -27,4 +35,5 @@ export declare class MessagesService {
         senderId: string;
         receiverId: string;
     }>;
+    getConversations(userId: string): Promise<any[]>;
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Query, UseGuards, Request, ParseIntPipe, DefaultValuePipe, Patch } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, UseGuards, Request, ParseIntPipe, DefaultValuePipe, Patch, Body } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 
@@ -6,6 +6,20 @@ import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 @UseGuards(JwtAuthGuard)
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
+
+  @Get()
+  getConversations(@Request() req) {
+    return this.messagesService.getConversations(req.user.id);
+  }
+
+  @Post()
+  sendMessage(
+    @Request() req,
+    @Body('receiverId') receiverId: string,
+    @Body('content') content: string,
+  ) {
+    return this.messagesService.sendMessage(req.user.id, receiverId, content);
+  }
 
   @Get('conversation/:otherUserId')
   getConversation(

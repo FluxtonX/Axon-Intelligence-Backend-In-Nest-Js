@@ -21,6 +21,12 @@ let MessagesController = class MessagesController {
     constructor(messagesService) {
         this.messagesService = messagesService;
     }
+    getConversations(req) {
+        return this.messagesService.getConversations(req.user.id);
+    }
+    sendMessage(req, receiverId, content) {
+        return this.messagesService.sendMessage(req.user.id, receiverId, content);
+    }
     getConversation(req, otherUserId, page, limit) {
         return this.messagesService.getConversation(req.user.id, otherUserId, page, limit);
     }
@@ -32,6 +38,22 @@ let MessagesController = class MessagesController {
     }
 };
 exports.MessagesController = MessagesController;
+__decorate([
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], MessagesController.prototype, "getConversations", null);
+__decorate([
+    (0, common_1.Post)(),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)('receiverId')),
+    __param(2, (0, common_1.Body)('content')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String]),
+    __metadata("design:returntype", void 0)
+], MessagesController.prototype, "sendMessage", null);
 __decorate([
     (0, common_1.Get)('conversation/:otherUserId'),
     __param(0, (0, common_1.Request)()),

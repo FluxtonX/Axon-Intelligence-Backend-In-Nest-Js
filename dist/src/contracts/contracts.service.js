@@ -93,6 +93,8 @@ let ContractsService = class ContractsService {
         if (contract.status !== 'PENDING_PAYMENT') {
             throw new common_1.BadRequestException('Contract is already active or paid');
         }
+        await this.walletsService.deposit(clientId, contract.amount);
+        await this.walletsService.lockEscrow(clientId, contract.amount, contract.id);
         return this.prisma.$transaction(async (tx) => {
             const updated = await tx.contract.update({
                 where: { id: contractId },

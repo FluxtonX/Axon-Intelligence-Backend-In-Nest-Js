@@ -28,6 +28,9 @@ let ProjectsController = class ProjectsController {
     create(user, createProjectDto) {
         return this.projectsService.create(user.id, createProjectDto);
     }
+    handleAiChat(step, message) {
+        return this.projectsService.handleAiChat(step, message);
+    }
     findAll(q, skip, take, minBudget, maxBudget) {
         return this.projectsService.findAll(q, skip, take, minBudget ? parseFloat(minBudget) : undefined, maxBudget ? parseFloat(maxBudget) : undefined);
     }
@@ -53,6 +56,17 @@ __decorate([
     __metadata("design:paramtypes", [Object, create_project_dto_1.CreateProjectDto]),
     __metadata("design:returntype", void 0)
 ], ProjectsController.prototype, "create", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('ai/chat'),
+    (0, swagger_1.ApiOperation)({ summary: 'Chat with AI to generate a project brief' }),
+    __param(0, (0, common_1.Body)('step')),
+    __param(1, (0, common_1.Body)('message')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, String]),
+    __metadata("design:returntype", void 0)
+], ProjectsController.prototype, "handleAiChat", null);
 __decorate([
     (0, common_1.Get)(),
     (0, swagger_1.ApiOperation)({ summary: 'Get all published projects (with search and pagination)' }),

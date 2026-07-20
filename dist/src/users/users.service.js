@@ -42,6 +42,38 @@ let UsersService = class UsersService {
             },
         });
     }
+    async searchFreelancers(q, skip = 0, take = 20, maxHourlyRate) {
+        const whereClause = {};
+        if (q) {
+            whereClause.OR = [
+                { profile: { title: { contains: q, mode: 'insensitive' } } },
+                { profile: { bio: { contains: q, mode: 'insensitive' } } },
+                { profile: { skills: { has: q } } },
+            ];
+        }
+        if (maxHourlyRate) {
+            whereClause.profile = {
+                ...whereClause.profile,
+                hourlyRate: { lte: maxHourlyRate },
+            };
+        }
+        whereClause.profile = { ...whereClause.profile, isNot: null };
+        const [users, total] = await Promise.all([
+            this.prisma.user.findMany({
+                where: whereClause,
+                skip,
+                take,
+                include: { profile: true },
+                orderBy: { profile: { averageRating: 'desc' } },
+            }),
+            this.prisma.user.count({ where: whereClause }),
+        ]);
+        const sanitizedUsers = users.map(user => {
+            const { passwordHash, ...result } = user;
+            return result;
+        });
+        return { data: sanitizedUsers, total, skip, take };
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([

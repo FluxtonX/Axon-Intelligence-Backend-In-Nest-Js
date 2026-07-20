@@ -21,5 +21,8 @@ export class WalletsController {
   @Post('withdraw')
   withdraw(@Request() req, @Body() dto: WithdrawDto) {
     return this.walletsService.withdraw(req.user.id, dto.amount);
+
   }
+
+
 }
