@@ -18,6 +18,12 @@ export class ProposalsController {
     return this.proposalsService.create(user.id, createProposalDto);
   }
 
+  @Get('me')
+  @ApiOperation({ summary: 'Freelancer views their submitted proposals' })
+  findMyProposals(@CurrentUser() user: any) {
+    return this.proposalsService.findMyProposals(user.id);
+  }
+
   @Get('project/:projectId')
   @ApiOperation({ summary: 'Client views proposals for their project' })
   findByProject(@Param('projectId') projectId: string, @CurrentUser() user: any) {

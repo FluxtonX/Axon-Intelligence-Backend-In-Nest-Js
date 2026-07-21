@@ -27,9 +27,12 @@ export class ProjectsController {
     return this.projectsService.handleAiChat(step, message);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Get()
   @ApiOperation({ summary: 'Get all published projects (with search and pagination)' })
   findAll(
+    @CurrentUser() user: any,
     @Query('q') q?: string,
     @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip?: number,
     @Query('take', new DefaultValuePipe(20), ParseIntPipe) take?: number,
@@ -42,6 +45,7 @@ export class ProjectsController {
       take,
       minBudget ? parseFloat(minBudget) : undefined,
       maxBudget ? parseFloat(maxBudget) : undefined,
+      user?.id,
     );
   }
 

@@ -31,8 +31,8 @@ let ProjectsController = class ProjectsController {
     handleAiChat(step, message) {
         return this.projectsService.handleAiChat(step, message);
     }
-    findAll(q, skip, take, minBudget, maxBudget) {
-        return this.projectsService.findAll(q, skip, take, minBudget ? parseFloat(minBudget) : undefined, maxBudget ? parseFloat(maxBudget) : undefined);
+    findAll(user, q, skip, take, minBudget, maxBudget) {
+        return this.projectsService.findAll(q, skip, take, minBudget ? parseFloat(minBudget) : undefined, maxBudget ? parseFloat(maxBudget) : undefined, user?.id);
     }
     findMyProjects(user, page, limit) {
         return this.projectsService.findAllByClient(user.id, page ? +page : 1, limit ? +limit : 10);
@@ -68,15 +68,18 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ProjectsController.prototype, "handleAiChat", null);
 __decorate([
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(),
     (0, swagger_1.ApiOperation)({ summary: 'Get all published projects (with search and pagination)' }),
-    __param(0, (0, common_1.Query)('q')),
-    __param(1, (0, common_1.Query)('skip', new common_1.DefaultValuePipe(0), common_1.ParseIntPipe)),
-    __param(2, (0, common_1.Query)('take', new common_1.DefaultValuePipe(20), common_1.ParseIntPipe)),
-    __param(3, (0, common_1.Query)('minBudget')),
-    __param(4, (0, common_1.Query)('maxBudget')),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Query)('q')),
+    __param(2, (0, common_1.Query)('skip', new common_1.DefaultValuePipe(0), common_1.ParseIntPipe)),
+    __param(3, (0, common_1.Query)('take', new common_1.DefaultValuePipe(20), common_1.ParseIntPipe)),
+    __param(4, (0, common_1.Query)('minBudget')),
+    __param(5, (0, common_1.Query)('maxBudget')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Number, Number, String, String]),
+    __metadata("design:paramtypes", [Object, String, Number, Number, String, String]),
     __metadata("design:returntype", void 0)
 ], ProjectsController.prototype, "findAll", null);
 __decorate([

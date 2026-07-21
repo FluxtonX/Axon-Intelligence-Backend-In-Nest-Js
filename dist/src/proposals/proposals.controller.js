@@ -27,6 +27,9 @@ let ProposalsController = class ProposalsController {
     create(user, createProposalDto) {
         return this.proposalsService.create(user.id, createProposalDto);
     }
+    findMyProposals(user) {
+        return this.proposalsService.findMyProposals(user.id);
+    }
     findByProject(projectId, user) {
         return this.proposalsService.findByProject(projectId, user.id);
     }
@@ -44,6 +47,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, create_proposal_dto_1.CreateProposalDto]),
     __metadata("design:returntype", void 0)
 ], ProposalsController.prototype, "create", null);
+__decorate([
+    (0, common_1.Get)('me'),
+    (0, swagger_1.ApiOperation)({ summary: 'Freelancer views their submitted proposals' }),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], ProposalsController.prototype, "findMyProposals", null);
 __decorate([
     (0, common_1.Get)('project/:projectId'),
     (0, swagger_1.ApiOperation)({ summary: 'Client views proposals for their project' }),

@@ -37,6 +37,13 @@ let ProposalsService = class ProposalsService {
             },
         });
     }
+    async findMyProposals(freelancerId) {
+        return this.prisma.proposal.findMany({
+            where: { freelancerId },
+            include: { project: { select: { title: true, client: { select: { profile: true } } } } },
+            orderBy: { createdAt: 'desc' },
+        });
+    }
     async findByProject(projectId, clientId) {
         const project = await this.prisma.project.findUnique({ where: { id: projectId } });
         if (!project || project.clientId !== clientId) {

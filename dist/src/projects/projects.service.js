@@ -32,7 +32,7 @@ let ProjectsService = class ProjectsService {
             throw new common_1.BadRequestException(`Failed to create project: ${error.message || error}`);
         }
     }
-    async findAll(q, skip = 0, take = 20, minBudget, maxBudget) {
+    async findAll(q, skip = 0, take = 20, minBudget, maxBudget, freelancerId) {
         const where = { status: 'PUBLISHED' };
         if (q) {
             where.OR = [
@@ -46,6 +46,9 @@ let ProjectsService = class ProjectsService {
                 where.budget.gte = minBudget;
             if (maxBudget !== undefined)
                 where.budget.lte = maxBudget;
+        }
+        if (freelancerId) {
+            where.proposals = { none: { freelancerId } };
         }
         const [projects, total] = await Promise.all([
             this.prisma.project.findMany({

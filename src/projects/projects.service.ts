@@ -28,6 +28,7 @@ export class ProjectsService {
     take: number = 20,
     minBudget?: number,
     maxBudget?: number,
+    freelancerId?: string,
   ) {
     const where: any = { status: 'PUBLISHED' };
 
@@ -42,6 +43,10 @@ export class ProjectsService {
       where.budget = {};
       if (minBudget !== undefined) where.budget.gte = minBudget;
       if (maxBudget !== undefined) where.budget.lte = maxBudget;
+    }
+
+    if (freelancerId) {
+      where.proposals = { none: { freelancerId } };
     }
 
     const [projects, total] = await Promise.all([
