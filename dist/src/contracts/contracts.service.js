@@ -28,6 +28,27 @@ let ContractsService = class ContractsService {
             apiVersion: '2023-10-16',
         });
     }
+    async createDirectContract(clientId, dto) {
+        const project = await this.prisma.project.create({
+            data: {
+                clientId,
+                title: dto.title,
+                description: dto.description,
+                budget: dto.amount,
+                status: 'PUBLISHED',
+            },
+        });
+        const contract = await this.prisma.contract.create({
+            data: {
+                projectId: project.id,
+                clientId,
+                freelancerId: dto.freelancerId,
+                amount: dto.amount,
+                status: 'PENDING_PAYMENT',
+            },
+        });
+        return contract;
+    }
     async createCheckout(proposalId, clientId) {
         const contract = await this.prisma.contract.findUnique({
             where: { proposalId },
@@ -116,7 +137,9 @@ let ContractsService = class ContractsService {
                 ],
             },
             include: {
-                project: true,
+                project: {
+                    include: { client: { select: { id: true, profile: true } } },
+                },
                 proposal: {
                     include: { freelancer: { select: { id: true, profile: true } } }
                 },

@@ -26,6 +26,9 @@ let ContractsController = class ContractsController {
     getMyContracts(user) {
         return this.contractsService.getMyContracts(user.id);
     }
+    createDirectContract(dto, user) {
+        return this.contractsService.createDirectContract(user.id, dto);
+    }
     createCheckout(proposalId, user) {
         return this.contractsService.createCheckout(proposalId, user.id);
     }
@@ -60,6 +63,17 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], ContractsController.prototype, "getMyContracts", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('contracts/direct'),
+    (0, swagger_1.ApiOperation)({ summary: 'Create a direct manual contract' }),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], ContractsController.prototype, "createDirectContract", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

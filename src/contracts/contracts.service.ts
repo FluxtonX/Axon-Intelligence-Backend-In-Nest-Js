@@ -16,6 +16,32 @@ export class ContractsService {
     });
   }
 
+  async createDirectContract(clientId: string, dto: import('./dto/create-direct-contract.dto').CreateDirectContractDto) {
+    // 1. Create a dummy/direct project
+    const project = await this.prisma.project.create({
+      data: {
+        clientId,
+        title: dto.title,
+        description: dto.description,
+        budget: dto.amount,
+        status: 'PUBLISHED', // or DRAFT if we want to hide it from feed
+      },
+    });
+
+    // 2. Create the contract linked to this project
+    const contract = await this.prisma.contract.create({
+      data: {
+        projectId: project.id,
+        clientId,
+        freelancerId: dto.freelancerId,
+        amount: dto.amount,
+        status: 'PENDING_PAYMENT',
+      },
+    });
+
+    return contract;
+  }
+
   async createCheckout(proposalId: string, clientId: string) {
     const contract = await this.prisma.contract.findUnique({
       where: { proposalId },
@@ -133,7 +159,9 @@ export class ContractsService {
         ],
       },
       include: {
-        project: true,
+        project: {
+          include: { client: { select: { id: true, profile: true } } },
+        },
         proposal: {
           include: { freelancer: { select: { id: true, profile: true } } }
         },

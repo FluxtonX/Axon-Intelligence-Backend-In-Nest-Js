@@ -21,6 +21,17 @@ export class ContractsController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @Post('contracts/direct')
+  @ApiOperation({ summary: 'Create a direct manual contract' })
+  createDirectContract(
+    @Body() dto: import('./dto/create-direct-contract.dto').CreateDirectContractDto,
+    @CurrentUser() user: any,
+  ) {
+    return this.contractsService.createDirectContract(user.id, dto);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Post('contracts/:proposalId/checkout')
   @ApiOperation({ summary: 'Generate Stripe Checkout URL' })
   createCheckout(@Param('proposalId') proposalId: string, @CurrentUser() user: any) {
