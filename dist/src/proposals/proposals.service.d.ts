@@ -4,28 +4,28 @@ export declare class ProposalsService {
     private prisma;
     constructor(prisma: PrismaService);
     create(freelancerId: string, dto: CreateProposalDto): Promise<{
-        projectId: string;
         id: string;
         createdAt: Date;
         status: import("@prisma/client").$Enums.ProposalStatus;
-        freelancerId: string;
         bidAmount: number;
         deliveryDays: number;
         coverLetter: string;
+        projectId: string;
+        freelancerId: string;
     }>;
     findMyProposals(freelancerId: string): Promise<({
         project: {
             title: string;
             client: {
                 profile: {
+                    id: string;
                     title: string | null;
+                    skills: string[];
                     firstName: string;
                     lastName: string;
-                    id: string;
                     avatarUrl: string | null;
                     bio: string | null;
                     hourlyRate: number | null;
-                    skills: string[];
                     averageRating: number | null;
                     totalReviews: number;
                     userId: string;
@@ -33,48 +33,48 @@ export declare class ProposalsService {
             };
         };
     } & {
-        projectId: string;
         id: string;
         createdAt: Date;
         status: import("@prisma/client").$Enums.ProposalStatus;
-        freelancerId: string;
         bidAmount: number;
         deliveryDays: number;
         coverLetter: string;
+        projectId: string;
+        freelancerId: string;
     })[]>;
     findByProject(projectId: string, clientId: string): Promise<({
         freelancer: {
+            id: string;
             profile: {
+                id: string;
                 title: string | null;
+                skills: string[];
                 firstName: string;
                 lastName: string;
-                id: string;
                 avatarUrl: string | null;
                 bio: string | null;
                 hourlyRate: number | null;
-                skills: string[];
                 averageRating: number | null;
                 totalReviews: number;
                 userId: string;
             } | null;
-            id: string;
         };
     } & {
-        projectId: string;
         id: string;
         createdAt: Date;
         status: import("@prisma/client").$Enums.ProposalStatus;
-        freelancerId: string;
         bidAmount: number;
         deliveryDays: number;
         coverLetter: string;
+        projectId: string;
+        freelancerId: string;
     })[]>;
     acceptProposal(id: string, clientId: string): Promise<{
-        clientId: string;
-        projectId: string;
         id: string;
         createdAt: Date;
         status: import("@prisma/client").$Enums.ContractStatus;
+        clientId: string;
+        projectId: string;
         freelancerId: string;
         amount: number;
         proposalId: string | null;

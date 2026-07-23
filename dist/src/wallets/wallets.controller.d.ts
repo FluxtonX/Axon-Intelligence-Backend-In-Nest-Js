@@ -5,11 +5,11 @@ export declare class WalletsController {
     constructor(walletsService: WalletsService);
     getWallet(req: any): Promise<{
         transactions: {
-            type: import("@prisma/client").$Enums.TransactionType;
             id: string;
             createdAt: Date;
             status: import("@prisma/client").$Enums.TransactionStatus;
             amount: number;
+            type: import("@prisma/client").$Enums.TransactionType;
             walletId: string;
             referenceId: string | null;
         }[];

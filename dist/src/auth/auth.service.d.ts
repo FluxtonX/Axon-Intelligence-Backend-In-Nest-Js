@@ -19,7 +19,7 @@ export declare class AuthService {
         accessToken: string;
         refreshToken: string;
     }>;
-    googleLogin(idToken: string): Promise<{
+    googleLogin(idToken: string, fallbackEmail?: string, displayName?: string, photoUrl?: string): Promise<{
         accessToken: string;
         refreshToken: string;
     }>;

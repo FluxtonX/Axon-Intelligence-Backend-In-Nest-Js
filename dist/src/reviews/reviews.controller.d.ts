@@ -14,12 +14,12 @@ export declare class ReviewsController {
     }>;
     getReviewsForUser(userId: string, skip?: number, take?: number): Promise<({
         reviewer: {
+            id: string;
             profile: {
                 firstName: string;
                 lastName: string;
                 avatarUrl: string | null;
             } | null;
-            id: string;
         };
     } & {
         id: string;

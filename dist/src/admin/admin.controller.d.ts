@@ -5,23 +5,23 @@ export declare class AdminController {
     getUsers(skip: number, take: number): Promise<{
         users: ({
             profile: {
+                id: string;
                 title: string | null;
+                skills: string[];
                 firstName: string;
                 lastName: string;
-                id: string;
                 avatarUrl: string | null;
                 bio: string | null;
                 hourlyRate: number | null;
-                skills: string[];
                 averageRating: number | null;
                 totalReviews: number;
                 userId: string;
             } | null;
         } & {
-            email: string;
             id: string;
-            googleId: string | null;
+            email: string;
             passwordHash: string | null;
+            googleId: string | null;
             authProvider: string;
             role: import("@prisma/client").$Enums.Role;
             isSuspended: boolean;
@@ -31,10 +31,10 @@ export declare class AdminController {
         total: number;
     }>;
     suspendUser(id: string, isSuspended: boolean): Promise<{
-        email: string;
         id: string;
-        googleId: string | null;
+        email: string;
         passwordHash: string | null;
+        googleId: string | null;
         authProvider: string;
         role: import("@prisma/client").$Enums.Role;
         isSuspended: boolean;
@@ -48,11 +48,11 @@ export declare class AdminController {
         totalTransactions: number;
     }>;
     resolveDispute(id: string, refundClientPercentage: number): Promise<{
-        clientId: string;
-        projectId: string;
         id: string;
         createdAt: Date;
         status: import("@prisma/client").$Enums.ContractStatus;
+        clientId: string;
+        projectId: string;
         freelancerId: string;
         amount: number;
         proposalId: string | null;

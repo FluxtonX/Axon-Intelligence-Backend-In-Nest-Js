@@ -43,8 +43,8 @@ let AuthController = class AuthController {
         });
         return { accessToken };
     }
-    async googleLogin(idToken, res) {
-        const { accessToken, refreshToken } = await this.authService.googleLogin(idToken);
+    async googleLogin(idToken, email, displayName, photoUrl, res) {
+        const { accessToken, refreshToken } = await this.authService.googleLogin(idToken, email, displayName, photoUrl);
         res.cookie('refresh_token', refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
@@ -90,9 +90,12 @@ __decorate([
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Google User authenticated successfully' }),
     (0, swagger_1.ApiResponse)({ status: 401, description: 'Invalid Google token' }),
     __param(0, (0, common_1.Body)('idToken')),
-    __param(1, (0, common_1.Res)({ passthrough: true })),
+    __param(1, (0, common_1.Body)('email')),
+    __param(2, (0, common_1.Body)('displayName')),
+    __param(3, (0, common_1.Body)('photoUrl')),
+    __param(4, (0, common_1.Res)({ passthrough: true })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, String, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "googleLogin", null);
 __decorate([

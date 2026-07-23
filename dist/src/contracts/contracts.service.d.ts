@@ -1,11 +1,12 @@
 import { PrismaService } from '../database/prisma.service';
 import { WalletsService } from '../wallets/wallets.service';
+import { CreateDirectContractDto } from './dto/create-direct-contract.dto';
 export declare class ContractsService {
     private prisma;
     private walletsService;
     private stripe;
     constructor(prisma: PrismaService, walletsService: WalletsService);
-    createDirectContract(clientId: string, dto: import('./dto/create-direct-contract.dto').CreateDirectContractDto): Promise<{
+    createDirectContract(clientId: string, dto: CreateDirectContractDto): Promise<{
         id: string;
         clientId: string;
         freelancerId: string;
@@ -15,7 +16,7 @@ export declare class ContractsService {
         proposalId: string | null;
         projectId: string;
     }>;
-    createCheckout(proposalId: string, clientId: string): Promise<{
+    createCheckout(contractId: string, clientId: string): Promise<{
         url: string | null;
     }>;
     completeContract(contractId: string, clientId: string): Promise<{

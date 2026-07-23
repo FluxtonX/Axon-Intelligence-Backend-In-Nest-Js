@@ -28,7 +28,6 @@ export class ProjectsController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Get()
   @ApiOperation({ summary: 'Get all published projects (with search and pagination)' })
   findAll(

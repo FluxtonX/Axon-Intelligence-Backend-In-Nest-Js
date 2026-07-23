@@ -51,8 +51,14 @@ export class AuthController {
   @ApiOperation({ summary: 'Login or Register with Google ID Token' })
   @ApiResponse({ status: 200, description: 'Google User authenticated successfully' })
   @ApiResponse({ status: 401, description: 'Invalid Google token' })
-  async googleLogin(@Body('idToken') idToken: string, @Res({ passthrough: true }) res: Response) {
-    const { accessToken, refreshToken } = await this.authService.googleLogin(idToken);
+  async googleLogin(
+    @Body('idToken') idToken: string,
+    @Body('email') email: string,
+    @Body('displayName') displayName: string,
+    @Body('photoUrl') photoUrl: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { accessToken, refreshToken } = await this.authService.googleLogin(idToken, email, displayName, photoUrl);
 
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,

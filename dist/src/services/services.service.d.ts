@@ -5,12 +5,12 @@ export declare class ServicesService {
     private prisma;
     constructor(prisma: PrismaService);
     create(freelancerId: string, dto: CreateServiceDto): Promise<{
-        description: string;
-        title: string;
         id: string;
         createdAt: Date;
-        freelancerId: string;
+        title: string;
+        description: string;
         deliveryDays: number;
+        freelancerId: string;
         category: string;
         price: number;
         imageUrl: string | null;
@@ -18,28 +18,28 @@ export declare class ServicesService {
     findAll(q?: string, skip?: number, take?: number): Promise<{
         services: ({
             freelancer: {
+                id: string;
                 profile: {
+                    id: string;
                     title: string | null;
+                    skills: string[];
                     firstName: string;
                     lastName: string;
-                    id: string;
                     avatarUrl: string | null;
                     bio: string | null;
                     hourlyRate: number | null;
-                    skills: string[];
                     averageRating: number | null;
                     totalReviews: number;
                     userId: string;
                 } | null;
-                id: string;
             };
         } & {
-            description: string;
-            title: string;
             id: string;
             createdAt: Date;
-            freelancerId: string;
+            title: string;
+            description: string;
             deliveryDays: number;
+            freelancerId: string;
             category: string;
             price: number;
             imageUrl: string | null;
@@ -47,23 +47,23 @@ export declare class ServicesService {
         total: number;
     }>;
     findByFreelancer(freelancerId: string): Promise<{
-        description: string;
-        title: string;
         id: string;
         createdAt: Date;
-        freelancerId: string;
+        title: string;
+        description: string;
         deliveryDays: number;
+        freelancerId: string;
         category: string;
         price: number;
         imageUrl: string | null;
     }[]>;
     update(id: string, freelancerId: string, dto: UpdateServiceDto): Promise<{
-        description: string;
-        title: string;
         id: string;
         createdAt: Date;
-        freelancerId: string;
+        title: string;
+        description: string;
         deliveryDays: number;
+        freelancerId: string;
         category: string;
         price: number;
         imageUrl: string | null;

@@ -4,20 +4,20 @@ export declare class UsersController {
     constructor(usersService: UsersService);
     getProfile(user: any): Promise<{
         profile: {
+            id: string;
             title: string | null;
+            skills: string[];
             firstName: string;
             lastName: string;
-            id: string;
             avatarUrl: string | null;
             bio: string | null;
             hourlyRate: number | null;
-            skills: string[];
             averageRating: number | null;
             totalReviews: number;
             userId: string;
         } | null;
-        email: string;
         id: string;
+        email: string;
         googleId: string | null;
         authProvider: string;
         role: import("@prisma/client").$Enums.Role;
@@ -26,14 +26,14 @@ export declare class UsersController {
         updatedAt: Date;
     }>;
     updateProfile(user: any, updateData: any): Promise<{
+        id: string;
         title: string | null;
+        skills: string[];
         firstName: string;
         lastName: string;
-        id: string;
         avatarUrl: string | null;
         bio: string | null;
         hourlyRate: number | null;
-        skills: string[];
         averageRating: number | null;
         totalReviews: number;
         userId: string;
@@ -41,20 +41,20 @@ export declare class UsersController {
     searchFreelancers(q?: string, skip?: string, take?: string, maxHourlyRate?: string): Promise<{
         data: {
             profile: {
+                id: string;
                 title: string | null;
+                skills: string[];
                 firstName: string;
                 lastName: string;
-                id: string;
                 avatarUrl: string | null;
                 bio: string | null;
                 hourlyRate: number | null;
-                skills: string[];
                 averageRating: number | null;
                 totalReviews: number;
                 userId: string;
             } | null;
-            email: string;
             id: string;
+            email: string;
             googleId: string | null;
             authProvider: string;
             role: import("@prisma/client").$Enums.Role;

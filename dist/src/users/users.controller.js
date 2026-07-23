@@ -35,6 +35,7 @@ let UsersController = class UsersController {
 };
 exports.UsersController = UsersController;
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('me'),
     (0, swagger_1.ApiOperation)({ summary: 'Get current user profile' }),
     __param(0, (0, current_user_decorator_1.CurrentUser)()),
@@ -43,6 +44,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "getProfile", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Patch)('me/profile'),
     (0, swagger_1.ApiOperation)({ summary: 'Update current user profile' }),
     __param(0, (0, current_user_decorator_1.CurrentUser)()),
@@ -65,7 +67,6 @@ __decorate([
 exports.UsersController = UsersController = __decorate([
     (0, swagger_1.ApiTags)('users'),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [users_service_1.UsersService])
 ], UsersController);

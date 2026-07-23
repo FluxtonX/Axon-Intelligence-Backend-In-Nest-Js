@@ -14,7 +14,7 @@ import { EmailModule } from '../email/email.module';
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'super_secret_key',
-      signOptions: { expiresIn: '15m' },
+      signOptions: { expiresIn: '30d' },
     }),
   ],
   controllers: [AuthController],

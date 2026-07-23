@@ -13,7 +13,7 @@ export declare class AuthController {
     login(dto: LoginDto, res: Response): Promise<{
         accessToken: string;
     }>;
-    googleLogin(idToken: string, res: Response): Promise<{
+    googleLogin(idToken: string, email: string, displayName: string, photoUrl: string, res: Response): Promise<{
         accessToken: string;
     }>;
     forgotPassword(dto: ForgotPasswordDto): Promise<{

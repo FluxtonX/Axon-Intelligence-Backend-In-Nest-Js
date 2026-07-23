@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, ForbiddenException, BadRequestException 
 import { PrismaService } from '../database/prisma.service';
 import { WalletsService } from '../wallets/wallets.service';
 import Stripe from 'stripe';
+import { CreateDirectContractDto } from './dto/create-direct-contract.dto';
 
 @Injectable()
 export class ContractsService {
@@ -16,7 +17,43 @@ export class ContractsService {
     });
   }
 
-  async createDirectContract(clientId: string, dto: import('./dto/create-direct-contract.dto').CreateDirectContractDto) {
+  async createDirectContract(clientId: string, dto: CreateDirectContractDto) {
+    // 0. Demo Environment Fix: Ensure the freelancer exists, or auto-create a mock one
+    let freelancer = await this.prisma.user.findUnique({ where: { id: dto.freelancerId } });
+    if (!freelancer) {
+      freelancer = await this.prisma.user.create({
+        data: {
+          id: dto.freelancerId,
+          email: `${dto.freelancerId}@axon-mock.com`,
+          role: 'USER',
+          profile: {
+            create: {
+              firstName: 'Demo',
+              lastName: 'Freelancer',
+            }
+          }
+        }
+      });
+    }
+
+    // 0.5 Demo Environment Fix: Ensure the client exists
+    let client = await this.prisma.user.findUnique({ where: { id: clientId } });
+    if (!client) {
+      client = await this.prisma.user.create({
+        data: {
+          id: clientId,
+          email: `${clientId}@axon-client-mock.com`,
+          role: 'USER',
+          profile: {
+            create: {
+              firstName: 'Demo',
+              lastName: 'Client',
+            }
+          }
+        }
+      });
+    }
+
     // 1. Create a dummy/direct project
     const project = await this.prisma.project.create({
       data: {
@@ -42,9 +79,9 @@ export class ContractsService {
     return contract;
   }
 
-  async createCheckout(proposalId: string, clientId: string) {
+  async createCheckout(contractId: string, clientId: string) {
     const contract = await this.prisma.contract.findUnique({
-      where: { proposalId },
+      where: { id: contractId },
       include: { project: true, proposal: true },
     });
 

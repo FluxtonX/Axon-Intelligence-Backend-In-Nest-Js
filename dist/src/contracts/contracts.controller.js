@@ -18,6 +18,7 @@ const contracts_service_1 = require("./contracts.service");
 const jwt_auth_guard_1 = require("../common/guards/jwt-auth.guard");
 const current_user_decorator_1 = require("../common/decorators/current-user.decorator");
 const swagger_1 = require("@nestjs/swagger");
+const create_direct_contract_dto_1 = require("./dto/create-direct-contract.dto");
 let ContractsController = class ContractsController {
     contractsService;
     constructor(contractsService) {
@@ -27,10 +28,13 @@ let ContractsController = class ContractsController {
         return this.contractsService.getMyContracts(user.id);
     }
     createDirectContract(dto, user) {
-        return this.contractsService.createDirectContract(user.id, dto);
+        const clientId = user?.id || 'demo_client_1';
+        return this.contractsService.createDirectContract(clientId, dto);
     }
-    createCheckout(proposalId, user) {
-        return this.contractsService.createCheckout(proposalId, user.id);
+    async createCheckout(contractId, user) {
+        const contract = await this.contractsService['prisma'].contract.findUnique({ where: { id: contractId } });
+        const clientId = user?.id || (contract?.clientId ?? 'demo_client_1');
+        return this.contractsService.createCheckout(contractId, clientId);
     }
     completeContract(id, user) {
         return this.contractsService.completeContract(id, user.id);
@@ -64,26 +68,22 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ContractsController.prototype, "getMyContracts", null);
 __decorate([
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('contracts/direct'),
     (0, swagger_1.ApiOperation)({ summary: 'Create a direct manual contract' }),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [create_direct_contract_dto_1.CreateDirectContractDto, Object]),
     __metadata("design:returntype", void 0)
 ], ContractsController.prototype, "createDirectContract", null);
 __decorate([
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Post)('contracts/:proposalId/checkout'),
+    (0, common_1.Post)('contracts/:contractId/checkout'),
     (0, swagger_1.ApiOperation)({ summary: 'Generate Stripe Checkout URL' }),
-    __param(0, (0, common_1.Param)('proposalId')),
+    __param(0, (0, common_1.Param)('contractId')),
     __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], ContractsController.prototype, "createCheckout", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)(),

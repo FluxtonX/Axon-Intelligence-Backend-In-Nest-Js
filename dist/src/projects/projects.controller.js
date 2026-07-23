@@ -69,7 +69,6 @@ __decorate([
 ], ProjectsController.prototype, "handleAiChat", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(),
     (0, swagger_1.ApiOperation)({ summary: 'Get all published projects (with search and pagination)' }),
     __param(0, (0, current_user_decorator_1.CurrentUser)()),

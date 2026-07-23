@@ -29,6 +29,38 @@ let ContractsService = class ContractsService {
         });
     }
     async createDirectContract(clientId, dto) {
+        let freelancer = await this.prisma.user.findUnique({ where: { id: dto.freelancerId } });
+        if (!freelancer) {
+            freelancer = await this.prisma.user.create({
+                data: {
+                    id: dto.freelancerId,
+                    email: `${dto.freelancerId}@axon-mock.com`,
+                    role: 'USER',
+                    profile: {
+                        create: {
+                            firstName: 'Demo',
+                            lastName: 'Freelancer',
+                        }
+                    }
+                }
+            });
+        }
+        let client = await this.prisma.user.findUnique({ where: { id: clientId } });
+        if (!client) {
+            client = await this.prisma.user.create({
+                data: {
+                    id: clientId,
+                    email: `${clientId}@axon-client-mock.com`,
+                    role: 'USER',
+                    profile: {
+                        create: {
+                            firstName: 'Demo',
+                            lastName: 'Client',
+                        }
+                    }
+                }
+            });
+        }
         const project = await this.prisma.project.create({
             data: {
                 clientId,
@@ -49,9 +81,9 @@ let ContractsService = class ContractsService {
         });
         return contract;
     }
-    async createCheckout(proposalId, clientId) {
+    async createCheckout(contractId, clientId) {
         const contract = await this.prisma.contract.findUnique({
-            where: { proposalId },
+            where: { id: contractId },
             include: { project: true, proposal: true },
         });
         if (!contract || contract.clientId !== clientId) {
