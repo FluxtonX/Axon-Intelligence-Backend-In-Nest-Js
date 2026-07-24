@@ -113,6 +113,24 @@ let ContractsService = class ContractsService {
         });
         return { url: session.url };
     }
+    async createPaymentIntent(contractId, clientId) {
+        const contract = await this.prisma.contract.findUnique({
+            where: { id: contractId },
+            include: { project: true },
+        });
+        if (!contract || contract.clientId !== clientId) {
+            throw new common_1.ForbiddenException('Cannot access this contract');
+        }
+        if (contract.status !== 'PENDING_PAYMENT') {
+            throw new common_1.BadRequestException('Contract is already active or paid');
+        }
+        const paymentIntent = await this.stripe.paymentIntents.create({
+            amount: Math.round(contract.amount * 100),
+            currency: 'usd',
+            metadata: { contractId: contract.id },
+        });
+        return { clientSecret: paymentIntent.client_secret };
+    }
     async completeContract(contractId, clientId) {
         const contract = await this.prisma.contract.findUnique({
             where: { id: contractId },
@@ -220,6 +238,22 @@ let ContractsService = class ContractsService {
         if (event.type === 'checkout.session.completed') {
             const session = event.data.object;
             const contractId = session.client_reference_id;
+            if (contractId) {
+                await this.prisma.$transaction(async (tx) => {
+                    const contract = await tx.contract.update({
+                        where: { id: contractId },
+                        data: { status: 'ACTIVE' },
+                    });
+                    await tx.project.update({
+                        where: { id: contract.projectId },
+                        data: { status: 'IN_PROGRESS' },
+                    });
+                });
+            }
+        }
+        else if (event.type === 'payment_intent.succeeded') {
+            const paymentIntent = event.data.object;
+            const contractId = paymentIntent.metadata.contractId;
             if (contractId) {
                 await this.prisma.$transaction(async (tx) => {
                     const contract = await tx.contract.update({

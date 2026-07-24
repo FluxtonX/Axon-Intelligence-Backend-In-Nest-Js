@@ -14,6 +14,7 @@ const class_validator_1 = require("class-validator");
 const swagger_1 = require("@nestjs/swagger");
 class CreateReviewDto {
     contractId;
+    revieweeId;
     rating;
     comment;
 }
@@ -24,6 +25,12 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateReviewDto.prototype, "contractId", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'ID of the person being reviewed' }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateReviewDto.prototype, "revieweeId", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ example: 5, description: 'Rating from 1 to 5' }),
     (0, class_validator_1.IsInt)(),

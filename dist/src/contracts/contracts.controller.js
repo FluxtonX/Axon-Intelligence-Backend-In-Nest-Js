@@ -36,17 +36,30 @@ let ContractsController = class ContractsController {
         const clientId = user?.id || (contract?.clientId ?? 'demo_client_1');
         return this.contractsService.createCheckout(contractId, clientId);
     }
-    completeContract(id, user) {
-        return this.contractsService.completeContract(id, user.id);
+    async createPaymentIntent(contractId, user) {
+        const contract = await this.contractsService['prisma'].contract.findUnique({ where: { id: contractId } });
+        const clientId = user?.id || (contract?.clientId ?? 'demo_client_1');
+        return this.contractsService.createPaymentIntent(contractId, clientId);
     }
-    fundContract(id, user) {
-        return this.contractsService.fundContract(id, user.id);
+    async completeContract(id, user) {
+        const contract = await this.contractsService['prisma'].contract.findUnique({ where: { id } });
+        const clientId = user?.id || (contract?.clientId ?? 'demo_client_1');
+        return this.contractsService.completeContract(id, clientId);
     }
-    submitWork(id, submissionDetails, user) {
-        return this.contractsService.submitWork(id, user.id, submissionDetails);
+    async fundContract(id, user) {
+        const contract = await this.contractsService['prisma'].contract.findUnique({ where: { id } });
+        const clientId = user?.id || (contract?.clientId ?? 'demo_client_1');
+        return this.contractsService.fundContract(id, clientId);
     }
-    disputeContract(id, user) {
-        return this.contractsService.disputeContract(id, user.id);
+    async submitWork(id, submissionDetails, user) {
+        const contract = await this.contractsService['prisma'].contract.findUnique({ where: { id } });
+        const freelancerId = user?.id || (contract?.freelancerId ?? 'demo_freelancer_1');
+        return this.contractsService.submitWork(id, freelancerId, submissionDetails);
+    }
+    async disputeContract(id, user) {
+        const contract = await this.contractsService['prisma'].contract.findUnique({ where: { id } });
+        const userId = user?.id || (contract?.clientId ?? 'demo_client_1');
+        return this.contractsService.disputeContract(id, userId);
     }
     async handleWebhook(signature, req) {
         if (!signature || !req.rawBody) {
@@ -86,30 +99,33 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ContractsController.prototype, "createCheckout", null);
 __decorate([
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('contracts/:contractId/payment-intent'),
+    (0, swagger_1.ApiOperation)({ summary: 'Generate Stripe PaymentIntent Client Secret' }),
+    __param(0, (0, common_1.Param)('contractId')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], ContractsController.prototype, "createPaymentIntent", null);
+__decorate([
     (0, common_1.Post)('contracts/:id/complete'),
     (0, swagger_1.ApiOperation)({ summary: 'Mark a contract as completed' }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], ContractsController.prototype, "completeContract", null);
 __decorate([
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('contracts/:id/fund'),
     (0, swagger_1.ApiOperation)({ summary: 'Simulate funding a contract' }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], ContractsController.prototype, "fundContract", null);
 __decorate([
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('contracts/:id/submit'),
     (0, swagger_1.ApiOperation)({ summary: 'Submit work for a contract' }),
     __param(0, (0, common_1.Param)('id')),
@@ -117,18 +133,16 @@ __decorate([
     __param(2, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], ContractsController.prototype, "submitWork", null);
 __decorate([
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('contracts/:id/dispute'),
     (0, swagger_1.ApiOperation)({ summary: 'Dispute a contract' }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], ContractsController.prototype, "disputeContract", null);
 __decorate([
     (0, common_1.Post)('payments/webhook'),

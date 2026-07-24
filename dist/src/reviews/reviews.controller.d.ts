@@ -7,10 +7,10 @@ export declare class ReviewsController {
         id: string;
         createdAt: Date;
         contractId: string;
+        revieweeId: string;
         rating: number;
         comment: string | null;
         reviewerId: string;
-        revieweeId: string;
     }>;
     getReviewsForUser(userId: string, skip?: number, take?: number): Promise<({
         reviewer: {
@@ -25,9 +25,9 @@ export declare class ReviewsController {
         id: string;
         createdAt: Date;
         contractId: string;
+        revieweeId: string;
         rating: number;
         comment: string | null;
         reviewerId: string;
-        revieweeId: string;
     })[]>;
 }

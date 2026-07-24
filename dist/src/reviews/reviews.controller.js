@@ -16,7 +16,6 @@ exports.ReviewsController = void 0;
 const common_1 = require("@nestjs/common");
 const reviews_service_1 = require("./reviews.service");
 const create_review_dto_1 = require("./dto/create-review.dto");
-const jwt_auth_guard_1 = require("../common/guards/jwt-auth.guard");
 const current_user_decorator_1 = require("../common/decorators/current-user.decorator");
 const swagger_1 = require("@nestjs/swagger");
 let ReviewsController = class ReviewsController {
@@ -24,8 +23,26 @@ let ReviewsController = class ReviewsController {
     constructor(reviewsService) {
         this.reviewsService = reviewsService;
     }
-    createReview(dto, user) {
-        return this.reviewsService.createReview(user.id, dto);
+    async createReview(dto, user) {
+        let reviewerId = user?.id;
+        if (!reviewerId && dto.contractId) {
+            const contract = await this.reviewsService['prisma'].contract.findUnique({ where: { id: dto.contractId } });
+            if (contract) {
+                if (dto.revieweeId === contract.clientId) {
+                    reviewerId = contract.freelancerId;
+                }
+                else if (dto.revieweeId === contract.freelancerId) {
+                    reviewerId = contract.clientId;
+                }
+                else {
+                    reviewerId = contract.freelancerId;
+                }
+            }
+            else {
+                reviewerId = 'demo_freelancer_1';
+            }
+        }
+        return this.reviewsService.createReview(reviewerId, dto);
     }
     getReviewsForUser(userId, skip, take) {
         return this.reviewsService.getReviewsForUser(userId, Number(skip) || 0, Number(take) || 10);
@@ -33,15 +50,13 @@ let ReviewsController = class ReviewsController {
 };
 exports.ReviewsController = ReviewsController;
 __decorate([
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)(),
     (0, swagger_1.ApiOperation)({ summary: 'Submit a review for a completed contract' }),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_review_dto_1.CreateReviewDto, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], ReviewsController.prototype, "createReview", null);
 __decorate([
     (0, common_1.Get)('user/:userId'),

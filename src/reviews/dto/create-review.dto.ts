@@ -7,6 +7,11 @@ export class CreateReviewDto {
   @IsNotEmpty()
   contractId: string;
 
+  @ApiPropertyOptional({ description: 'ID of the person being reviewed' })
+  @IsString()
+  @IsOptional()
+  revieweeId?: string;
+
   @ApiProperty({ example: 5, description: 'Rating from 1 to 5' })
   @IsInt()
   @Min(1)
