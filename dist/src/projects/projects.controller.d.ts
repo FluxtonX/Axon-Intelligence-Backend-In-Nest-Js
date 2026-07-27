@@ -8,11 +8,11 @@ export declare class ProjectsController {
         id: string;
         createdAt: Date;
         title: string;
+        skills: string[];
         description: string;
         budget: number;
         timeline: string | null;
         status: import("@prisma/client").$Enums.ProjectStatus;
-        skills: string[];
         clientId: string;
     }>;
     handleAiChat(step: number, message: string): Promise<{
@@ -27,27 +27,27 @@ export declare class ProjectsController {
                 id: string;
                 profile: {
                     id: string;
-                    title: string | null;
-                    skills: string[];
+                    userId: string;
                     firstName: string;
                     lastName: string;
                     avatarUrl: string | null;
                     bio: string | null;
+                    title: string | null;
                     hourlyRate: number | null;
+                    skills: string[];
                     averageRating: number | null;
                     totalReviews: number;
-                    userId: string;
                 } | null;
             };
         } & {
             id: string;
             createdAt: Date;
             title: string;
+            skills: string[];
             description: string;
             budget: number;
             timeline: string | null;
             status: import("@prisma/client").$Enums.ProjectStatus;
-            skills: string[];
             clientId: string;
         })[];
         total: number;
@@ -68,27 +68,27 @@ export declare class ProjectsController {
                 id: string;
                 profile: {
                     id: string;
-                    title: string | null;
-                    skills: string[];
+                    userId: string;
                     firstName: string;
                     lastName: string;
                     avatarUrl: string | null;
                     bio: string | null;
+                    title: string | null;
                     hourlyRate: number | null;
+                    skills: string[];
                     averageRating: number | null;
                     totalReviews: number;
-                    userId: string;
                 } | null;
             };
         } & {
             id: string;
             createdAt: Date;
             title: string;
+            skills: string[];
             description: string;
             budget: number;
             timeline: string | null;
             status: import("@prisma/client").$Enums.ProjectStatus;
-            skills: string[];
             clientId: string;
         })[];
         meta: {
@@ -113,38 +113,38 @@ export declare class ProjectsController {
             id: string;
             profile: {
                 id: string;
-                title: string | null;
-                skills: string[];
+                userId: string;
                 firstName: string;
                 lastName: string;
                 avatarUrl: string | null;
                 bio: string | null;
+                title: string | null;
                 hourlyRate: number | null;
+                skills: string[];
                 averageRating: number | null;
                 totalReviews: number;
-                userId: string;
             } | null;
         };
     } & {
         id: string;
         createdAt: Date;
         title: string;
+        skills: string[];
         description: string;
         budget: number;
         timeline: string | null;
         status: import("@prisma/client").$Enums.ProjectStatus;
-        skills: string[];
         clientId: string;
     }>;
     update(id: string, user: any, updateProjectDto: UpdateProjectDto): Promise<{
         id: string;
         createdAt: Date;
         title: string;
+        skills: string[];
         description: string;
         budget: number;
         timeline: string | null;
         status: import("@prisma/client").$Enums.ProjectStatus;
-        skills: string[];
         clientId: string;
     }>;
 }

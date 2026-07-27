@@ -28,6 +28,7 @@ const reviews_module_1 = require("./reviews/reviews.module");
 const wallets_module_1 = require("./wallets/wallets.module");
 const email_module_1 = require("./email/email.module");
 const admin_module_1 = require("./admin/admin.module");
+const notifications_module_1 = require("./notifications/notifications.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -53,6 +54,7 @@ exports.AppModule = AppModule = __decorate([
                 rootPath: (0, path_1.join)(process.cwd(), 'uploads'),
                 serveRoot: '/uploads',
             }),
+            notifications_module_1.NotificationsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

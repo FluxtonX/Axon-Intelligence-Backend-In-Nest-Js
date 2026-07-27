@@ -8,39 +8,41 @@ export declare class AdminService {
         users: ({
             profile: {
                 id: string;
-                title: string | null;
-                skills: string[];
+                userId: string;
                 firstName: string;
                 lastName: string;
                 avatarUrl: string | null;
                 bio: string | null;
+                title: string | null;
                 hourlyRate: number | null;
+                skills: string[];
                 averageRating: number | null;
                 totalReviews: number;
-                userId: string;
             } | null;
         } & {
             id: string;
+            createdAt: Date;
             email: string;
             passwordHash: string | null;
             googleId: string | null;
             authProvider: string;
             role: import("@prisma/client").$Enums.Role;
             isSuspended: boolean;
-            createdAt: Date;
+            fcmToken: string | null;
             updatedAt: Date;
         })[];
         total: number;
     }>;
     suspendUser(userId: string, isSuspended: boolean): Promise<{
         id: string;
+        createdAt: Date;
         email: string;
         passwordHash: string | null;
         googleId: string | null;
         authProvider: string;
         role: import("@prisma/client").$Enums.Role;
         isSuspended: boolean;
-        createdAt: Date;
+        fcmToken: string | null;
         updatedAt: Date;
     }>;
     getMetrics(): Promise<{

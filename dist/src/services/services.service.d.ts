@@ -21,16 +21,16 @@ export declare class ServicesService {
                 id: string;
                 profile: {
                     id: string;
-                    title: string | null;
-                    skills: string[];
+                    userId: string;
                     firstName: string;
                     lastName: string;
                     avatarUrl: string | null;
                     bio: string | null;
+                    title: string | null;
                     hourlyRate: number | null;
+                    skills: string[];
                     averageRating: number | null;
                     totalReviews: number;
-                    userId: string;
                 } | null;
             };
         } & {

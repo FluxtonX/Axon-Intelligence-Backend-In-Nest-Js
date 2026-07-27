@@ -55,6 +55,7 @@ model User {
   authProvider String     @default("LOCAL")
   role         Role       @default(USER)
   isSuspended  Boolean    @default(false)
+  fcmToken     String?
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 

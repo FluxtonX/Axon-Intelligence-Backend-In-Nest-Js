@@ -28,6 +28,12 @@ let UsersService = class UsersService {
         const { passwordHash, ...result } = user;
         return result;
     }
+    async updateDeviceToken(userId, token) {
+        return this.prisma.user.update({
+            where: { id: userId },
+            data: { fcmToken: token },
+        });
+    }
     async updateProfile(userId, data) {
         return this.prisma.profile.update({
             where: { userId },

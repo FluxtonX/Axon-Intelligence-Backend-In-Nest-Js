@@ -10,10 +10,10 @@ export declare class MessagesGateway {
         content: string;
     }, client: Socket): Promise<{
         id: string;
-        createdAt: Date;
-        content: string;
-        read: boolean;
         senderId: string;
         receiverId: string;
+        content: string;
+        read: boolean;
+        createdAt: Date;
     }>;
 }

@@ -24,6 +24,13 @@ export class UsersController {
     return this.usersService.updateProfile(user.id, updateData);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Patch('me/device-token')
+  @ApiOperation({ summary: 'Update current user FCM device token' })
+  updateDeviceToken(@CurrentUser() user: any, @Body('token') token: string) {
+    return this.usersService.updateDeviceToken(user.id, token);
+  }
+
   @Get('freelancers')
   @ApiOperation({ summary: 'Search for freelancers' })
   searchFreelancers(

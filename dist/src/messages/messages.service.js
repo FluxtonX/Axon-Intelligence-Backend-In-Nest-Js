@@ -16,12 +16,15 @@ exports.MessagesService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../database/prisma.service");
 const messages_gateway_1 = require("./messages.gateway");
+const notifications_service_1 = require("../notifications/notifications.service");
 let MessagesService = class MessagesService {
     prisma;
     messagesGateway;
-    constructor(prisma, messagesGateway) {
+    notificationsService;
+    constructor(prisma, messagesGateway, notificationsService) {
         this.prisma = prisma;
         this.messagesGateway = messagesGateway;
+        this.notificationsService = notificationsService;
     }
     async sendMessage(senderId, receiverId, content) {
         const message = await this.prisma.message.create({
@@ -32,6 +35,7 @@ let MessagesService = class MessagesService {
             },
         });
         this.messagesGateway.server.emit(`messageToUser-${receiverId}`, message);
+        this.notificationsService.sendPushNotification(receiverId, 'New Message', content, { type: 'chat', senderId }).catch(err => console.error('Failed to send push notification', err));
         return message;
     }
     async getConversation(userId1, userId2, page = 1, limit = 20) {
@@ -125,6 +129,7 @@ exports.MessagesService = MessagesService = __decorate([
     (0, common_1.Injectable)(),
     __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => messages_gateway_1.MessagesGateway))),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        messages_gateway_1.MessagesGateway])
+        messages_gateway_1.MessagesGateway,
+        notifications_service_1.NotificationsService])
 ], MessagesService);
 //# sourceMappingURL=messages.service.js.map

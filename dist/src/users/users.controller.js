@@ -29,6 +29,9 @@ let UsersController = class UsersController {
     updateProfile(user, updateData) {
         return this.usersService.updateProfile(user.id, updateData);
     }
+    updateDeviceToken(user, token) {
+        return this.usersService.updateDeviceToken(user.id, token);
+    }
     searchFreelancers(q, skip, take, maxHourlyRate) {
         return this.usersService.searchFreelancers(q, skip ? parseInt(skip, 10) : 0, take ? parseInt(take, 10) : 20, maxHourlyRate ? parseFloat(maxHourlyRate) : undefined);
     }
@@ -53,6 +56,16 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "updateProfile", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Patch)('me/device-token'),
+    (0, swagger_1.ApiOperation)({ summary: 'Update current user FCM device token' }),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Body)('token')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "updateDeviceToken", null);
 __decorate([
     (0, common_1.Get)('freelancers'),
     (0, swagger_1.ApiOperation)({ summary: 'Search for freelancers' }),

@@ -19,6 +19,13 @@ export class UsersService {
     return result;
   }
 
+  async updateDeviceToken(userId: string, token: string) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { fcmToken: token },
+    });
+  }
+
   async updateProfile(userId: string, data: any) {
     return this.prisma.profile.update({
       where: { userId },

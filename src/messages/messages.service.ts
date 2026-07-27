@@ -2,11 +2,14 @@ import { Injectable, NotFoundException, Inject, forwardRef } from '@nestjs/commo
 import { PrismaService } from '../database/prisma.service';
 import { MessagesGateway } from './messages.gateway';
 
+import { NotificationsService } from '../notifications/notifications.service';
+
 @Injectable()
 export class MessagesService {
   constructor(
     private prisma: PrismaService,
     @Inject(forwardRef(() => MessagesGateway)) private messagesGateway: MessagesGateway,
+    private notificationsService: NotificationsService,
   ) {}
 
   async sendMessage(senderId: string, receiverId: string, content: string) {
@@ -20,6 +23,14 @@ export class MessagesService {
     
     // Broadcast the message to the receiver in real-time
     this.messagesGateway.server.emit(`messageToUser-${receiverId}`, message);
+
+    // Send push notification asynchronously
+    this.notificationsService.sendPushNotification(
+      receiverId,
+      'New Message',
+      content,
+      { type: 'chat', senderId }
+    ).catch(err => console.error('Failed to send push notification', err));
     
     return message;
   }

@@ -19,6 +19,7 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { WalletsModule } from './wallets/wallets.module';
 import { EmailModule } from './email/email.module';
 import { AdminModule } from './admin/admin.module';
+import { NotificationsModule } from './notifications/notifications.module';
 @Module({
   imports: [
     CommonModule,
@@ -40,6 +41,7 @@ import { AdminModule } from './admin/admin.module';
       rootPath: join(process.cwd(), 'uploads'),
       serveRoot: '/uploads',
     }),
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [

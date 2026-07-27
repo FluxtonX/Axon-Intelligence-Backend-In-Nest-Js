@@ -1,25 +1,27 @@
 import { PrismaService } from '../database/prisma.service';
 import { MessagesGateway } from './messages.gateway';
+import { NotificationsService } from '../notifications/notifications.service';
 export declare class MessagesService {
     private prisma;
     private messagesGateway;
-    constructor(prisma: PrismaService, messagesGateway: MessagesGateway);
+    private notificationsService;
+    constructor(prisma: PrismaService, messagesGateway: MessagesGateway, notificationsService: NotificationsService);
     sendMessage(senderId: string, receiverId: string, content: string): Promise<{
         id: string;
+        senderId: string;
+        receiverId: string;
         content: string;
         read: boolean;
         createdAt: Date;
-        senderId: string;
-        receiverId: string;
     }>;
     getConversation(userId1: string, userId2: string, page?: number, limit?: number): Promise<{
         data: {
             id: string;
+            senderId: string;
+            receiverId: string;
             content: string;
             read: boolean;
             createdAt: Date;
-            senderId: string;
-            receiverId: string;
         }[];
         meta: {
             total: number;
@@ -31,11 +33,11 @@ export declare class MessagesService {
     getUnreadCount(userId: string): Promise<number>;
     markAsRead(messageId: string, userId: string): Promise<{
         id: string;
+        senderId: string;
+        receiverId: string;
         content: string;
         read: boolean;
         createdAt: Date;
-        senderId: string;
-        receiverId: string;
     }>;
     getConversations(userId: string): Promise<any[]>;
 }

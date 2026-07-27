@@ -6,21 +6,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MessagesModule = void 0;
+exports.NotificationsModule = void 0;
 const common_1 = require("@nestjs/common");
-const messages_gateway_1 = require("./messages.gateway");
-const messages_controller_1 = require("./messages.controller");
-const messages_service_1 = require("./messages.service");
+const notifications_service_1 = require("./notifications.service");
 const database_module_1 = require("../database/database.module");
-const notifications_module_1 = require("../notifications/notifications.module");
-let MessagesModule = class MessagesModule {
+let NotificationsModule = class NotificationsModule {
 };
-exports.MessagesModule = MessagesModule;
-exports.MessagesModule = MessagesModule = __decorate([
+exports.NotificationsModule = NotificationsModule;
+exports.NotificationsModule = NotificationsModule = __decorate([
     (0, common_1.Module)({
-        imports: [database_module_1.DatabaseModule, notifications_module_1.NotificationsModule],
-        controllers: [messages_controller_1.MessagesController],
-        providers: [messages_gateway_1.MessagesGateway, messages_service_1.MessagesService],
+        imports: [database_module_1.DatabaseModule],
+        providers: [notifications_service_1.NotificationsService],
+        exports: [notifications_service_1.NotificationsService]
     })
-], MessagesModule);
-//# sourceMappingURL=messages.module.js.map
+], NotificationsModule);
+//# sourceMappingURL=notifications.module.js.map
