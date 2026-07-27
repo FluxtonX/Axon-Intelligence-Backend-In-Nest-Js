@@ -1,18 +1,27 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
+import { MessagesGateway } from './messages.gateway';
 
 @Injectable()
 export class MessagesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Inject(forwardRef(() => MessagesGateway)) private messagesGateway: MessagesGateway,
+  ) {}
 
   async sendMessage(senderId: string, receiverId: string, content: string) {
-    return this.prisma.message.create({
+    const message = await this.prisma.message.create({
       data: {
         senderId,
         receiverId,
         content,
       },
     });
+    
+    // Broadcast the message to the receiver in real-time
+    this.messagesGateway.server.emit(`messageToUser-${receiverId}`, message);
+    
+    return message;
   }
 
   async getConversation(userId1: string, userId2: string, page: number = 1, limit: number = 20) {
