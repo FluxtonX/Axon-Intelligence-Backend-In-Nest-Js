@@ -17,12 +17,11 @@ export class UsersController {
     return this.usersService.findById(user.id);
   }
 
-  // @UseGuards(JwtAuthGuard) removed for demo to prevent 401 token expiry errors
+  @UseGuards(JwtAuthGuard)
   @Patch('me/profile')
   @ApiOperation({ summary: 'Update current user profile' })
   updateProfile(@CurrentUser() user: any, @Body() updateData: any) {
-    const userId = user?.id || updateData.demoUserId || 'demo_client_1'; // fallback
-    return this.usersService.updateProfile(userId, updateData);
+    return this.usersService.updateProfile(user.id, updateData);
   }
 
   @Get('freelancers')

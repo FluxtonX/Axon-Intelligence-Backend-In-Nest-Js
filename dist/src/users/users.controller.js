@@ -27,8 +27,7 @@ let UsersController = class UsersController {
         return this.usersService.findById(user.id);
     }
     updateProfile(user, updateData) {
-        const userId = user?.id || updateData.demoUserId || 'demo_client_1';
-        return this.usersService.updateProfile(userId, updateData);
+        return this.usersService.updateProfile(user.id, updateData);
     }
     searchFreelancers(q, skip, take, maxHourlyRate) {
         return this.usersService.searchFreelancers(q, skip ? parseInt(skip, 10) : 0, take ? parseInt(take, 10) : 20, maxHourlyRate ? parseFloat(maxHourlyRate) : undefined);
@@ -45,6 +44,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "getProfile", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Patch)('me/profile'),
     (0, swagger_1.ApiOperation)({ summary: 'Update current user profile' }),
     __param(0, (0, current_user_decorator_1.CurrentUser)()),

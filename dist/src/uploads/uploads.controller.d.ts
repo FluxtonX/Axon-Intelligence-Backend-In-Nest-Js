@@ -13,7 +13,7 @@ export declare class UploadsController {
     }>;
     uploadFileLocally(file: Express.Multer.File, req: any): {
         uploadUrl: string;
-        publicUrl: string;
         key: string;
+        publicUrl: string;
     };
 }

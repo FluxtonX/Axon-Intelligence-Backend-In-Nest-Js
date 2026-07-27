@@ -39,21 +39,25 @@ export class UploadsController {
     storage: diskStorage({
       destination: './uploads',
       filename: (req, file, cb) => {
-        const uniqueSuffix = uuidv4();
-        cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const ext = extname(file.originalname);
+        cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
       }
     })
   }))
   uploadFileLocally(@UploadedFile() file: Express.Multer.File, @Req() req: any) {
-    // Construct local URL using request protocol and host
-    const protocol = req.protocol;
-    const host = req.get('host');
-    const publicUrl = `${protocol}://${host}/uploads/${file.filename}`;
+    if (!file) {
+      throw new Error('No file uploaded');
+    }
+
+    // Return a relative URL. The frontend will dynamically prepend the correct API_BASE_URL.
+    // This prevents broken images when the local Wi-Fi IP address changes.
+    const relativeUrl = `/uploads/${file.filename}`;
     
     return {
-      uploadUrl: publicUrl,
-      publicUrl: publicUrl,
+      uploadUrl: relativeUrl,
       key: file.filename,
+      publicUrl: relativeUrl
     };
   }
 }

@@ -17,7 +17,6 @@ const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
 const multer_1 = require("multer");
 const path_1 = require("path");
-const uuid_1 = require("uuid");
 const uploads_service_1 = require("./uploads.service");
 const jwt_auth_guard_1 = require("../common/guards/jwt-auth.guard");
 const swagger_1 = require("@nestjs/swagger");
@@ -48,13 +47,14 @@ let UploadsController = class UploadsController {
         return this.uploadsService.getPresignedUrl(dto.filename, dto.contentType);
     }
     uploadFileLocally(file, req) {
-        const protocol = req.protocol;
-        const host = req.get('host');
-        const publicUrl = `${protocol}://${host}/uploads/${file.filename}`;
+        if (!file) {
+            throw new Error('No file uploaded');
+        }
+        const relativeUrl = `/uploads/${file.filename}`;
         return {
-            uploadUrl: publicUrl,
-            publicUrl: publicUrl,
+            uploadUrl: relativeUrl,
             key: file.filename,
+            publicUrl: relativeUrl
         };
     }
 };
@@ -74,8 +74,9 @@ __decorate([
         storage: (0, multer_1.diskStorage)({
             destination: './uploads',
             filename: (req, file, cb) => {
-                const uniqueSuffix = (0, uuid_1.v4)();
-                cb(null, `${uniqueSuffix}${(0, path_1.extname)(file.originalname)}`);
+                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+                const ext = (0, path_1.extname)(file.originalname);
+                cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
             }
         })
     })),
