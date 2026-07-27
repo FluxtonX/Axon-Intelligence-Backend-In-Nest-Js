@@ -5,16 +5,16 @@ export declare class UsersController {
     getProfile(user: any): Promise<{
         profile: {
             id: string;
-            userId: string;
+            title: string | null;
+            skills: string[];
             firstName: string;
             lastName: string;
             avatarUrl: string | null;
             bio: string | null;
-            title: string | null;
             hourlyRate: number | null;
-            skills: string[];
             averageRating: number | null;
             totalReviews: number;
+            userId: string;
         } | null;
         id: string;
         email: string;
@@ -27,31 +27,31 @@ export declare class UsersController {
     }>;
     updateProfile(user: any, updateData: any): Promise<{
         id: string;
-        userId: string;
+        title: string | null;
+        skills: string[];
         firstName: string;
         lastName: string;
         avatarUrl: string | null;
         bio: string | null;
-        title: string | null;
         hourlyRate: number | null;
-        skills: string[];
         averageRating: number | null;
         totalReviews: number;
+        userId: string;
     }>;
     searchFreelancers(q?: string, skip?: string, take?: string, maxHourlyRate?: string): Promise<{
         data: {
             profile: {
                 id: string;
-                userId: string;
+                title: string | null;
+                skills: string[];
                 firstName: string;
                 lastName: string;
                 avatarUrl: string | null;
                 bio: string | null;
-                title: string | null;
                 hourlyRate: number | null;
-                skills: string[];
                 averageRating: number | null;
                 totalReviews: number;
+                userId: string;
             } | null;
             id: string;
             email: string;
