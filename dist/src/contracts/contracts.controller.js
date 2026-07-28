@@ -27,39 +27,30 @@ let ContractsController = class ContractsController {
     getMyContracts(user) {
         return this.contractsService.getMyContracts(user.id);
     }
-    createDirectContract(dto, user) {
+    getContractById(id, user) {
         const clientId = user?.id || 'demo_client_1';
-        return this.contractsService.createDirectContract(clientId, dto);
+        return this.contractsService.getContractById(id, clientId);
+    }
+    createDirectContract(dto, user) {
+        return this.contractsService.createDirectContract(user.id, dto);
     }
     async createCheckout(contractId, user) {
-        const contract = await this.contractsService['prisma'].contract.findUnique({ where: { id: contractId } });
-        const clientId = user?.id || (contract?.clientId ?? 'demo_client_1');
-        return this.contractsService.createCheckout(contractId, clientId);
+        return this.contractsService.createCheckout(contractId, user.id);
     }
     async createPaymentIntent(contractId, user) {
-        const contract = await this.contractsService['prisma'].contract.findUnique({ where: { id: contractId } });
-        const clientId = user?.id || (contract?.clientId ?? 'demo_client_1');
-        return this.contractsService.createPaymentIntent(contractId, clientId);
+        return this.contractsService.createPaymentIntent(contractId, user.id);
     }
     async completeContract(id, user) {
-        const contract = await this.contractsService['prisma'].contract.findUnique({ where: { id } });
-        const clientId = user?.id || (contract?.clientId ?? 'demo_client_1');
-        return this.contractsService.completeContract(id, clientId);
+        return this.contractsService.completeContract(id, user.id);
     }
     async fundContract(id, user) {
-        const contract = await this.contractsService['prisma'].contract.findUnique({ where: { id } });
-        const clientId = user?.id || (contract?.clientId ?? 'demo_client_1');
-        return this.contractsService.fundContract(id, clientId);
+        return this.contractsService.fundContract(id, user.id);
     }
     async submitWork(id, submissionDetails, user) {
-        const contract = await this.contractsService['prisma'].contract.findUnique({ where: { id } });
-        const freelancerId = user?.id || (contract?.freelancerId ?? 'demo_freelancer_1');
-        return this.contractsService.submitWork(id, freelancerId, submissionDetails);
+        return this.contractsService.submitWork(id, user.id, submissionDetails);
     }
     async disputeContract(id, user) {
-        const contract = await this.contractsService['prisma'].contract.findUnique({ where: { id } });
-        const userId = user?.id || (contract?.clientId ?? 'demo_client_1');
-        return this.contractsService.disputeContract(id, userId);
+        return this.contractsService.disputeContract(id, user.id);
     }
     async handleWebhook(signature, req) {
         if (!signature || !req.rawBody) {
@@ -81,6 +72,16 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ContractsController.prototype, "getMyContracts", null);
 __decorate([
+    (0, common_1.Get)('contracts/:id'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get a specific contract by ID' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], ContractsController.prototype, "getContractById", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('contracts/direct'),
     (0, swagger_1.ApiOperation)({ summary: 'Create a direct manual contract' }),
     __param(0, (0, common_1.Body)()),
@@ -90,6 +91,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ContractsController.prototype, "createDirectContract", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('contracts/:contractId/checkout'),
     (0, swagger_1.ApiOperation)({ summary: 'Generate Stripe Checkout URL' }),
     __param(0, (0, common_1.Param)('contractId')),
@@ -99,6 +101,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ContractsController.prototype, "createCheckout", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('contracts/:contractId/payment-intent'),
     (0, swagger_1.ApiOperation)({ summary: 'Generate Stripe PaymentIntent Client Secret' }),
     __param(0, (0, common_1.Param)('contractId')),
@@ -108,6 +111,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ContractsController.prototype, "createPaymentIntent", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('contracts/:id/complete'),
     (0, swagger_1.ApiOperation)({ summary: 'Mark a contract as completed' }),
     __param(0, (0, common_1.Param)('id')),
@@ -117,6 +121,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ContractsController.prototype, "completeContract", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('contracts/:id/fund'),
     (0, swagger_1.ApiOperation)({ summary: 'Simulate funding a contract' }),
     __param(0, (0, common_1.Param)('id')),
@@ -126,6 +131,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ContractsController.prototype, "fundContract", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('contracts/:id/submit'),
     (0, swagger_1.ApiOperation)({ summary: 'Submit work for a contract' }),
     __param(0, (0, common_1.Param)('id')),
@@ -136,6 +142,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ContractsController.prototype, "submitWork", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('contracts/:id/dispute'),
     (0, swagger_1.ApiOperation)({ summary: 'Dispute a contract' }),
     __param(0, (0, common_1.Param)('id')),

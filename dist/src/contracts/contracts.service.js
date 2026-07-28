@@ -197,6 +197,23 @@ let ContractsService = class ContractsService {
             orderBy: { createdAt: 'desc' },
         });
     }
+    async getContractById(contractId, userId) {
+        const contract = await this.prisma.contract.findUnique({
+            where: { id: contractId },
+            include: {
+                project: {
+                    include: { client: { select: { id: true, profile: true } } },
+                },
+                proposal: {
+                    include: { freelancer: { select: { id: true, profile: true } } }
+                },
+            },
+        });
+        if (!contract) {
+            throw new common_1.NotFoundException('Contract not found');
+        }
+        return contract;
+    }
     async submitWork(contractId, freelancerId, submissionDetails) {
         const contract = await this.prisma.contract.findUnique({
             where: { id: contractId },
