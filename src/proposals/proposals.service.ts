@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { CreateProposalDto } from './dto/create-proposal.dto';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class ProposalsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationsService: NotificationsService
+  ) {}
 
   async create(freelancerId: string, dto: CreateProposalDto) {
     const project = await this.prisma.project.findUnique({
@@ -23,12 +27,22 @@ export class ProposalsService {
       throw new ConflictException('You have already submitted a proposal for this project');
     }
 
-    return this.prisma.proposal.create({
+    const proposal = await this.prisma.proposal.create({
       data: {
         ...dto,
         freelancerId,
       },
     });
+
+    // Notify project owner
+    this.notificationsService.sendNotification(
+      project.clientId,
+      'New Proposal Received',
+      `A freelancer has submitted a new proposal for "${project.title}"`,
+      'PROPOSAL'
+    );
+
+    return proposal;
   }
   async findMyProposals(freelancerId: string) {
     return this.prisma.proposal.findMany({
@@ -85,6 +99,14 @@ export class ProposalsService {
           status: 'PENDING_PAYMENT',
         },
       });
+
+      // Notify freelancer
+      this.notificationsService.sendNotification(
+        proposal.freelancerId,
+        'Proposal Accepted',
+        `Your proposal for "${proposal.project.title}" was accepted!`,
+        'PROPOSAL'
+      );
 
       return contract;
     });

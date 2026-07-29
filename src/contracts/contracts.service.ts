@@ -4,13 +4,16 @@ import { WalletsService } from '../wallets/wallets.service';
 import Stripe from 'stripe';
 import { CreateDirectContractDto } from './dto/create-direct-contract.dto';
 
+import { NotificationsService } from '../notifications/notifications.service';
+
 @Injectable()
 export class ContractsService {
   private stripe: Stripe;
 
   constructor(
     private prisma: PrismaService,
-    private walletsService: WalletsService
+    private walletsService: WalletsService,
+    private notificationsService: NotificationsService
   ) {
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_123', {
       apiVersion: '2023-10-16' as any,
@@ -75,6 +78,14 @@ export class ContractsService {
         status: 'PENDING_PAYMENT',
       },
     });
+
+    // Notify freelancer
+    this.notificationsService.sendNotification(
+      dto.freelancerId,
+      'New Contract Offered',
+      `You have received a direct contract offer for "${project.title}"`,
+      'CONTRACT'
+    );
 
     return contract;
   }
@@ -171,6 +182,14 @@ export class ContractsService {
         contract.id
       );
 
+      // Notify freelancer
+      this.notificationsService.sendNotification(
+        contract.freelancerId,
+        'Contract Completed',
+        'Your contract has been completed and funds have been released to your wallet!',
+        'CONTRACT'
+      );
+
       return updatedContract;
     });
   }
@@ -205,6 +224,14 @@ export class ContractsService {
         where: { id: contract.projectId },
         data: { status: 'IN_PROGRESS' },
       });
+
+      // Notify freelancer
+      this.notificationsService.sendNotification(
+        contract.freelancerId,
+        'Contract Funded',
+        'The client has funded the contract. You can now start working!',
+        'CONTRACT'
+      );
 
       return updated;
     });
@@ -266,10 +293,20 @@ export class ContractsService {
 
     // Since we don't have a submission details field in schema, we'll just update status.
     // In a real app we would save the submissionDetails.
-    return this.prisma.contract.update({
+    const updated = await this.prisma.contract.update({
       where: { id: contractId },
       data: { status: 'SUBMITTED' },
     });
+
+    // Notify client
+    this.notificationsService.sendNotification(
+      contract.clientId,
+      'Work Submitted',
+      'The freelancer has submitted work for your contract. Please review it.',
+      'CONTRACT'
+    );
+
+    return updated;
   }
 
   async disputeContract(contractId: string, userId: string) {

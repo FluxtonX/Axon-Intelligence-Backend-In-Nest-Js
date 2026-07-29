@@ -41,6 +41,9 @@ var __importStar = (this && this.__importStar) || (function () {
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var NotificationsService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationsService = void 0;
@@ -48,13 +51,16 @@ const common_1 = require("@nestjs/common");
 const app_1 = require("firebase-admin/app");
 const messaging_1 = require("firebase-admin/messaging");
 const prisma_service_1 = require("../database/prisma.service");
+const notifications_gateway_1 = require("./notifications.gateway");
 const path = __importStar(require("path"));
 let NotificationsService = NotificationsService_1 = class NotificationsService {
     prisma;
+    notificationsGateway;
     logger = new common_1.Logger(NotificationsService_1.name);
     firebaseApp;
-    constructor(prisma) {
+    constructor(prisma, notificationsGateway) {
         this.prisma = prisma;
+        this.notificationsGateway = notificationsGateway;
     }
     onModuleInit() {
         try {
@@ -68,6 +74,26 @@ let NotificationsService = NotificationsService_1 = class NotificationsService {
             this.logger.error('Failed to initialize Firebase Admin', error);
         }
     }
+    async sendNotification(userId, title, body, type = 'SYSTEM', data) {
+        try {
+            const notification = await this.prisma.notification.create({
+                data: {
+                    userId,
+                    title,
+                    body,
+                    type,
+                    data: data || {},
+                },
+            });
+            this.notificationsGateway.sendNotificationToUser(userId, notification);
+            this.sendPushNotification(userId, title, body, data).catch(err => this.logger.error(`Failed to send push fallback: ${err.message}`));
+            return notification;
+        }
+        catch (error) {
+            this.logger.error(`Failed to send notification to user ${userId}`, error);
+            throw error;
+        }
+    }
     async sendPushNotification(userId, title, body, data) {
         try {
             const user = await this.prisma.user.findUnique({
@@ -75,8 +101,13 @@ let NotificationsService = NotificationsService_1 = class NotificationsService {
                 select: { fcmToken: true },
             });
             if (!user || !user.fcmToken) {
-                this.logger.debug(`User ${userId} does not have an FCM token.`);
                 return false;
+            }
+            const stringData = {};
+            if (data) {
+                Object.keys(data).forEach(key => {
+                    stringData[key] = String(data[key]);
+                });
             }
             const message = {
                 token: user.fcmToken,
@@ -84,10 +115,9 @@ let NotificationsService = NotificationsService_1 = class NotificationsService {
                     title,
                     body,
                 },
-                data: data || {},
+                data: stringData,
             };
-            const response = await (0, messaging_1.getMessaging)(this.firebaseApp).send(message);
-            this.logger.log(`Successfully sent message: ${response}`);
+            await (0, messaging_1.getMessaging)(this.firebaseApp).send(message);
             return true;
         }
         catch (error) {
@@ -95,10 +125,36 @@ let NotificationsService = NotificationsService_1 = class NotificationsService {
             return false;
         }
     }
+    async getUserNotifications(userId) {
+        return this.prisma.notification.findMany({
+            where: { userId },
+            orderBy: { createdAt: 'desc' },
+            take: 50,
+        });
+    }
+    async getUnreadCount(userId) {
+        return this.prisma.notification.count({
+            where: { userId, isRead: false },
+        });
+    }
+    async markAsRead(notificationId, userId) {
+        return this.prisma.notification.updateMany({
+            where: { id: notificationId, userId },
+            data: { isRead: true },
+        });
+    }
+    async markAllAsRead(userId) {
+        return this.prisma.notification.updateMany({
+            where: { userId, isRead: false },
+            data: { isRead: true },
+        });
+    }
 };
 exports.NotificationsService = NotificationsService;
 exports.NotificationsService = NotificationsService = NotificationsService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => notifications_gateway_1.NotificationsGateway))),
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        notifications_gateway_1.NotificationsGateway])
 ], NotificationsService);
 //# sourceMappingURL=notifications.service.js.map

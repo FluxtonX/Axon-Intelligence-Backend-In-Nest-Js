@@ -17,13 +17,16 @@ const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../database/prisma.service");
 const wallets_service_1 = require("../wallets/wallets.service");
 const stripe_1 = __importDefault(require("stripe"));
+const notifications_service_1 = require("../notifications/notifications.service");
 let ContractsService = class ContractsService {
     prisma;
     walletsService;
+    notificationsService;
     stripe;
-    constructor(prisma, walletsService) {
+    constructor(prisma, walletsService, notificationsService) {
         this.prisma = prisma;
         this.walletsService = walletsService;
+        this.notificationsService = notificationsService;
         this.stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY || 'sk_test_123', {
             apiVersion: '2023-10-16',
         });
@@ -79,6 +82,7 @@ let ContractsService = class ContractsService {
                 status: 'PENDING_PAYMENT',
             },
         });
+        this.notificationsService.sendNotification(dto.freelancerId, 'New Contract Offered', `You have received a direct contract offer for "${project.title}"`, 'CONTRACT');
         return contract;
     }
     async createCheckout(contractId, clientId) {
@@ -151,6 +155,7 @@ let ContractsService = class ContractsService {
                 data: { status: 'COMPLETED' },
             });
             await this.walletsService.releaseEscrowToEarnings(contract.freelancerId, contract.clientId, contract.amount, contract.id);
+            this.notificationsService.sendNotification(contract.freelancerId, 'Contract Completed', 'Your contract has been completed and funds have been released to your wallet!', 'CONTRACT');
             return updatedContract;
         });
     }
@@ -175,6 +180,7 @@ let ContractsService = class ContractsService {
                 where: { id: contract.projectId },
                 data: { status: 'IN_PROGRESS' },
             });
+            this.notificationsService.sendNotification(contract.freelancerId, 'Contract Funded', 'The client has funded the contract. You can now start working!', 'CONTRACT');
             return updated;
         });
     }
@@ -224,10 +230,12 @@ let ContractsService = class ContractsService {
         if (contract.status !== 'ACTIVE') {
             throw new common_1.BadRequestException('Only ACTIVE contracts can be submitted');
         }
-        return this.prisma.contract.update({
+        const updated = await this.prisma.contract.update({
             where: { id: contractId },
             data: { status: 'SUBMITTED' },
         });
+        this.notificationsService.sendNotification(contract.clientId, 'Work Submitted', 'The freelancer has submitted work for your contract. Please review it.', 'CONTRACT');
+        return updated;
     }
     async disputeContract(contractId, userId) {
         const contract = await this.prisma.contract.findUnique({
@@ -290,6 +298,7 @@ exports.ContractsService = ContractsService;
 exports.ContractsService = ContractsService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        wallets_service_1.WalletsService])
+        wallets_service_1.WalletsService,
+        notifications_service_1.NotificationsService])
 ], ContractsService);
 //# sourceMappingURL=contracts.service.js.map

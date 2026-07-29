@@ -35,7 +35,7 @@ let MessagesService = class MessagesService {
             },
         });
         this.messagesGateway.server.emit(`messageToUser-${receiverId}`, message);
-        this.notificationsService.sendPushNotification(receiverId, 'New Message', content, { type: 'chat', senderId }).catch(err => console.error('Failed to send push notification', err));
+        this.notificationsService.sendNotification(receiverId, 'New Message', content, { type: 'chat', senderId }).catch(err => console.error('Failed to send push notification', err));
         return message;
     }
     async getConversation(userId1, userId2, page = 1, limit = 20) {

@@ -47,6 +47,14 @@ enum TransactionStatus {
   FAILED
 }
 
+enum NotificationType {
+  SYSTEM
+  MESSAGE
+  PROPOSAL
+  CONTRACT
+  PAYMENT
+}
+
 model User {
   id           String     @id @default(uuid())
   email        String     @unique
@@ -69,6 +77,7 @@ model User {
   reviewsGiven   Review[] @relation("Reviewer")
   reviewsReceived Review[] @relation("Reviewee")
   wallet       Wallet?
+  notifications Notification[]
 }
 
 model Profile {
@@ -214,3 +223,18 @@ model Transaction {
   
   @@index([walletId])
 }
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  title     String
+  body      String
+  type      NotificationType @default(SYSTEM)
+  data      Json?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  @@index([userId])
+}
+

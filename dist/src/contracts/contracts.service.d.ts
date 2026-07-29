@@ -1,11 +1,13 @@
 import { PrismaService } from '../database/prisma.service';
 import { WalletsService } from '../wallets/wallets.service';
 import { CreateDirectContractDto } from './dto/create-direct-contract.dto';
+import { NotificationsService } from '../notifications/notifications.service';
 export declare class ContractsService {
     private prisma;
     private walletsService;
+    private notificationsService;
     private stripe;
-    constructor(prisma: PrismaService, walletsService: WalletsService);
+    constructor(prisma: PrismaService, walletsService: WalletsService, notificationsService: NotificationsService);
     createDirectContract(clientId: string, dto: CreateDirectContractDto): Promise<{
         id: string;
         createdAt: Date;

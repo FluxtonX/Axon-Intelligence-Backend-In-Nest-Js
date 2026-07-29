@@ -12,10 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProposalsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../database/prisma.service");
+const notifications_service_1 = require("../notifications/notifications.service");
 let ProposalsService = class ProposalsService {
     prisma;
-    constructor(prisma) {
+    notificationsService;
+    constructor(prisma, notificationsService) {
         this.prisma = prisma;
+        this.notificationsService = notificationsService;
     }
     async create(freelancerId, dto) {
         const project = await this.prisma.project.findUnique({
@@ -30,12 +33,14 @@ let ProposalsService = class ProposalsService {
         if (existing) {
             throw new common_1.ConflictException('You have already submitted a proposal for this project');
         }
-        return this.prisma.proposal.create({
+        const proposal = await this.prisma.proposal.create({
             data: {
                 ...dto,
                 freelancerId,
             },
         });
+        this.notificationsService.sendNotification(project.clientId, 'New Proposal Received', `A freelancer has submitted a new proposal for "${project.title}"`, 'PROPOSAL');
+        return proposal;
     }
     async findMyProposals(freelancerId) {
         return this.prisma.proposal.findMany({
@@ -82,6 +87,7 @@ let ProposalsService = class ProposalsService {
                     status: 'PENDING_PAYMENT',
                 },
             });
+            this.notificationsService.sendNotification(proposal.freelancerId, 'Proposal Accepted', `Your proposal for "${proposal.project.title}" was accepted!`, 'PROPOSAL');
             return contract;
         });
     }
@@ -89,6 +95,7 @@ let ProposalsService = class ProposalsService {
 exports.ProposalsService = ProposalsService;
 exports.ProposalsService = ProposalsService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        notifications_service_1.NotificationsService])
 ], ProposalsService);
 //# sourceMappingURL=proposals.service.js.map

@@ -25,7 +25,7 @@ export class MessagesService {
     this.messagesGateway.server.emit(`messageToUser-${receiverId}`, message);
 
     // Send push notification asynchronously
-    this.notificationsService.sendPushNotification(
+    this.notificationsService.sendNotification(
       receiverId,
       'New Message',
       content,

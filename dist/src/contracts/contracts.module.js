@@ -12,12 +12,13 @@ const contracts_service_1 = require("./contracts.service");
 const contracts_controller_1 = require("./contracts.controller");
 const database_module_1 = require("../database/database.module");
 const wallets_module_1 = require("../wallets/wallets.module");
+const notifications_module_1 = require("../notifications/notifications.module");
 let ContractsModule = class ContractsModule {
 };
 exports.ContractsModule = ContractsModule;
 exports.ContractsModule = ContractsModule = __decorate([
     (0, common_1.Module)({
-        imports: [database_module_1.DatabaseModule, wallets_module_1.WalletsModule],
+        imports: [database_module_1.DatabaseModule, wallets_module_1.WalletsModule, notifications_module_1.NotificationsModule],
         controllers: [contracts_controller_1.ContractsController],
         providers: [contracts_service_1.ContractsService],
     })
