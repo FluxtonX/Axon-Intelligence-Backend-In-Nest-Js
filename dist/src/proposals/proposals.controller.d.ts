@@ -77,6 +77,8 @@ export declare class ProposalsController {
         projectId: string;
         freelancerId: string;
         amount: number;
+        submissionUrl: string | null;
+        submissionNotes: string | null;
         proposalId: string | null;
     }>;
 }

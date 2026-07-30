@@ -11,12 +11,13 @@ const common_1 = require("@nestjs/common");
 const reviews_controller_1 = require("./reviews.controller");
 const reviews_service_1 = require("./reviews.service");
 const database_module_1 = require("../database/database.module");
+const notifications_module_1 = require("../notifications/notifications.module");
 let ReviewsModule = class ReviewsModule {
 };
 exports.ReviewsModule = ReviewsModule;
 exports.ReviewsModule = ReviewsModule = __decorate([
     (0, common_1.Module)({
-        imports: [database_module_1.DatabaseModule],
+        imports: [database_module_1.DatabaseModule, notifications_module_1.NotificationsModule],
         controllers: [reviews_controller_1.ReviewsController],
         providers: [reviews_service_1.ReviewsService]
     })

@@ -1,4 +1,7 @@
-import { Controller, Get, Post, Param, Body, UseGuards, Req, Headers } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, UseGuards, Req, Headers, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 import type { RawBodyRequest } from '@nestjs/common';
 import { ContractsService } from './contracts.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
@@ -68,13 +71,25 @@ export class ContractsController {
 
   @UseGuards(JwtAuthGuard)
   @Post('contracts/:id/submit')
+  @UseInterceptors(FileInterceptor('file', {
+    storage: diskStorage({
+      destination: './uploads/deliveries',
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const ext = extname(file.originalname);
+        cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
+      }
+    })
+  }))
   @ApiOperation({ summary: 'Submit work for a contract' })
   async submitWork(
     @Param('id') id: string,
     @Body('submissionDetails') submissionDetails: string,
     @CurrentUser() user: any,
+    @UploadedFile() file?: Express.Multer.File,
   ) {
-    return this.contractsService.submitWork(id, user.id, submissionDetails);
+    const submissionUrl = file ? `/uploads/deliveries/${file.filename}` : undefined;
+    return this.contractsService.submitWork(id, user.id, submissionDetails, submissionUrl);
   }
 
   @UseGuards(JwtAuthGuard)

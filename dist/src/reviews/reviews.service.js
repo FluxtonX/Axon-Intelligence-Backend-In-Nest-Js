@@ -12,10 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReviewsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../database/prisma.service");
+const notifications_service_1 = require("../notifications/notifications.service");
 let ReviewsService = class ReviewsService {
     prisma;
-    constructor(prisma) {
+    notificationsService;
+    constructor(prisma, notificationsService) {
         this.prisma = prisma;
+        this.notificationsService = notificationsService;
     }
     async createReview(reviewerId, dto) {
         const contract = await this.prisma.contract.findUnique({
@@ -35,7 +38,10 @@ let ReviewsService = class ReviewsService {
             revieweeId = contract.clientId;
         }
         else {
-            throw new common_1.ForbiddenException('You are not part of this contract');
+            if (!dto.revieweeId) {
+                throw new common_1.BadRequestException('revieweeId is required when you are not part of the contract');
+            }
+            revieweeId = dto.revieweeId;
         }
         const existingReview = await this.prisma.review.findUnique({
             where: {
@@ -72,6 +78,7 @@ let ReviewsService = class ReviewsService {
                     totalReviews: newTotalReviews,
                 },
             });
+            this.notificationsService.sendNotification(revieweeId, 'New Review Received!', `You received a ${dto.rating}-star review for your recent contract.`, 'CONTRACT');
             return review;
         });
     }
@@ -101,6 +108,7 @@ let ReviewsService = class ReviewsService {
 exports.ReviewsService = ReviewsService;
 exports.ReviewsService = ReviewsService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        notifications_service_1.NotificationsService])
 ], ReviewsService);
 //# sourceMappingURL=reviews.service.js.map

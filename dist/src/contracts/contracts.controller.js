@@ -14,6 +14,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContractsController = void 0;
 const common_1 = require("@nestjs/common");
+const platform_express_1 = require("@nestjs/platform-express");
+const multer_1 = require("multer");
+const path_1 = require("path");
 const contracts_service_1 = require("./contracts.service");
 const jwt_auth_guard_1 = require("../common/guards/jwt-auth.guard");
 const current_user_decorator_1 = require("../common/decorators/current-user.decorator");
@@ -46,8 +49,9 @@ let ContractsController = class ContractsController {
     async fundContract(id, user) {
         return this.contractsService.fundContract(id, user.id);
     }
-    async submitWork(id, submissionDetails, user) {
-        return this.contractsService.submitWork(id, user.id, submissionDetails);
+    async submitWork(id, submissionDetails, user, file) {
+        const submissionUrl = file ? `/uploads/deliveries/${file.filename}` : undefined;
+        return this.contractsService.submitWork(id, user.id, submissionDetails, submissionUrl);
     }
     async disputeContract(id, user) {
         return this.contractsService.disputeContract(id, user.id);
@@ -133,12 +137,23 @@ __decorate([
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('contracts/:id/submit'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
+        storage: (0, multer_1.diskStorage)({
+            destination: './uploads/deliveries',
+            filename: (req, file, cb) => {
+                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+                const ext = (0, path_1.extname)(file.originalname);
+                cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
+            }
+        })
+    })),
     (0, swagger_1.ApiOperation)({ summary: 'Submit work for a contract' }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)('submissionDetails')),
     __param(2, (0, current_user_decorator_1.CurrentUser)()),
+    __param(3, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:paramtypes", [String, String, Object, Object]),
     __metadata("design:returntype", Promise)
 ], ContractsController.prototype, "submitWork", null);
 __decorate([

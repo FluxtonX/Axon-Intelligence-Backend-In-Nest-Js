@@ -154,6 +154,8 @@ model Contract {
   freelancerId String
   amount       Float
   status       ContractStatus @default(PENDING_PAYMENT)
+  submissionUrl String?
+  submissionNotes String?
   createdAt    DateTime       @default(now())
   
   reviews      Review[]

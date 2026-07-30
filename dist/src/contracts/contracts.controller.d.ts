@@ -61,6 +61,15 @@ export declare class ContractsController {
             projectId: string;
             freelancerId: string;
         }) | null;
+        reviews: {
+            id: string;
+            createdAt: Date;
+            contractId: string;
+            revieweeId: string;
+            rating: number;
+            comment: string | null;
+            reviewerId: string;
+        }[];
     } & {
         id: string;
         createdAt: Date;
@@ -69,6 +78,8 @@ export declare class ContractsController {
         projectId: string;
         freelancerId: string;
         amount: number;
+        submissionUrl: string | null;
+        submissionNotes: string | null;
         proposalId: string | null;
     })[]>;
     getContractById(id: string, user: any): Promise<{
@@ -127,6 +138,15 @@ export declare class ContractsController {
             projectId: string;
             freelancerId: string;
         }) | null;
+        reviews: {
+            id: string;
+            createdAt: Date;
+            contractId: string;
+            revieweeId: string;
+            rating: number;
+            comment: string | null;
+            reviewerId: string;
+        }[];
     } & {
         id: string;
         createdAt: Date;
@@ -135,6 +155,8 @@ export declare class ContractsController {
         projectId: string;
         freelancerId: string;
         amount: number;
+        submissionUrl: string | null;
+        submissionNotes: string | null;
         proposalId: string | null;
     }>;
     createDirectContract(dto: CreateDirectContractDto, user: any): Promise<{
@@ -145,6 +167,8 @@ export declare class ContractsController {
         projectId: string;
         freelancerId: string;
         amount: number;
+        submissionUrl: string | null;
+        submissionNotes: string | null;
         proposalId: string | null;
     }>;
     createCheckout(contractId: string, user: any): Promise<{
@@ -161,6 +185,8 @@ export declare class ContractsController {
         projectId: string;
         freelancerId: string;
         amount: number;
+        submissionUrl: string | null;
+        submissionNotes: string | null;
         proposalId: string | null;
     }>;
     fundContract(id: string, user: any): Promise<{
@@ -171,9 +197,11 @@ export declare class ContractsController {
         projectId: string;
         freelancerId: string;
         amount: number;
+        submissionUrl: string | null;
+        submissionNotes: string | null;
         proposalId: string | null;
     }>;
-    submitWork(id: string, submissionDetails: string, user: any): Promise<{
+    submitWork(id: string, submissionDetails: string, user: any, file?: Express.Multer.File): Promise<{
         id: string;
         createdAt: Date;
         status: import("@prisma/client").$Enums.ContractStatus;
@@ -181,6 +209,8 @@ export declare class ContractsController {
         projectId: string;
         freelancerId: string;
         amount: number;
+        submissionUrl: string | null;
+        submissionNotes: string | null;
         proposalId: string | null;
     }>;
     disputeContract(id: string, user: any): Promise<{
@@ -191,6 +221,8 @@ export declare class ContractsController {
         projectId: string;
         freelancerId: string;
         amount: number;
+        submissionUrl: string | null;
+        submissionNotes: string | null;
         proposalId: string | null;
     }>;
     handleWebhook(signature: string, req: RawBodyRequest<Request>): Promise<{

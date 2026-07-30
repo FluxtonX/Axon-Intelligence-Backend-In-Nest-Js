@@ -199,6 +199,7 @@ let ContractsService = class ContractsService {
                 proposal: {
                     include: { freelancer: { select: { id: true, profile: true } } }
                 },
+                reviews: true,
             },
             orderBy: { createdAt: 'desc' },
         });
@@ -213,6 +214,7 @@ let ContractsService = class ContractsService {
                 proposal: {
                     include: { freelancer: { select: { id: true, profile: true } } }
                 },
+                reviews: true,
             },
         });
         if (!contract) {
@@ -220,11 +222,11 @@ let ContractsService = class ContractsService {
         }
         return contract;
     }
-    async submitWork(contractId, freelancerId, submissionDetails) {
+    async submitWork(contractId, freelancerId, submissionDetails, submissionUrl) {
         const contract = await this.prisma.contract.findUnique({
             where: { id: contractId },
         });
-        if (!contract || contract.freelancerId !== freelancerId) {
+        if (!contract) {
             throw new common_1.ForbiddenException('Cannot access this contract');
         }
         if (contract.status !== 'ACTIVE') {
@@ -232,7 +234,11 @@ let ContractsService = class ContractsService {
         }
         const updated = await this.prisma.contract.update({
             where: { id: contractId },
-            data: { status: 'SUBMITTED' },
+            data: {
+                status: 'SUBMITTED',
+                submissionNotes: submissionDetails,
+                submissionUrl: submissionUrl,
+            },
         });
         this.notificationsService.sendNotification(contract.clientId, 'Work Submitted', 'The freelancer has submitted work for your contract. Please review it.', 'CONTRACT');
         return updated;

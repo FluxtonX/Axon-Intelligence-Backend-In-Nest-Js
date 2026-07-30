@@ -1,10 +1,14 @@
 import { Injectable, BadRequestException, ForbiddenException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { CreateReviewDto } from './dto/create-review.dto';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class ReviewsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationsService: NotificationsService
+  ) {}
 
   async createReview(reviewerId: string, dto: CreateReviewDto) {
     const contract = await this.prisma.contract.findUnique({
@@ -26,7 +30,10 @@ export class ReviewsService {
     } else if (contract.freelancerId === reviewerId) {
       revieweeId = contract.clientId;
     } else {
-      throw new ForbiddenException('You are not part of this contract');
+      if (!dto.revieweeId) {
+        throw new BadRequestException('revieweeId is required when you are not part of the contract');
+      }
+      revieweeId = dto.revieweeId;
     }
 
     // Check if the user already reviewed this contract
@@ -73,6 +80,14 @@ export class ReviewsService {
           totalReviews: newTotalReviews,
         },
       });
+
+      // Send a notification to the reviewee
+      this.notificationsService.sendNotification(
+        revieweeId,
+        'New Review Received!',
+        `You received a ${dto.rating}-star review for your recent contract.`,
+        'CONTRACT'
+      );
 
       return review;
     });

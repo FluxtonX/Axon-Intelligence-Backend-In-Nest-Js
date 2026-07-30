@@ -57,6 +57,8 @@ export declare class AdminController {
         projectId: string;
         freelancerId: string;
         amount: number;
+        submissionUrl: string | null;
+        submissionNotes: string | null;
         proposalId: string | null;
     }>;
 }
