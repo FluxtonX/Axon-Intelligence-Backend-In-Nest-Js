@@ -18,6 +18,7 @@ export declare class ContractsService {
         amount: number;
         submissionUrl: string | null;
         submissionNotes: string | null;
+        deadline: Date | null;
         proposalId: string | null;
     }>;
     createCheckout(contractId: string, clientId: string): Promise<{
@@ -36,6 +37,7 @@ export declare class ContractsService {
         amount: number;
         submissionUrl: string | null;
         submissionNotes: string | null;
+        deadline: Date | null;
         proposalId: string | null;
     }>;
     fundContract(contractId: string, clientId: string): Promise<{
@@ -48,6 +50,7 @@ export declare class ContractsService {
         amount: number;
         submissionUrl: string | null;
         submissionNotes: string | null;
+        deadline: Date | null;
         proposalId: string | null;
     }>;
     getMyContracts(userId: string): Promise<({
@@ -125,6 +128,7 @@ export declare class ContractsService {
         amount: number;
         submissionUrl: string | null;
         submissionNotes: string | null;
+        deadline: Date | null;
         proposalId: string | null;
     })[]>;
     getContractById(contractId: string, userId: string): Promise<{
@@ -202,6 +206,7 @@ export declare class ContractsService {
         amount: number;
         submissionUrl: string | null;
         submissionNotes: string | null;
+        deadline: Date | null;
         proposalId: string | null;
     }>;
     submitWork(contractId: string, freelancerId: string, submissionDetails: string, submissionUrl?: string): Promise<{
@@ -214,6 +219,20 @@ export declare class ContractsService {
         amount: number;
         submissionUrl: string | null;
         submissionNotes: string | null;
+        deadline: Date | null;
+        proposalId: string | null;
+    }>;
+    requestRevision(contractId: string, clientId: string, notes: string): Promise<{
+        id: string;
+        createdAt: Date;
+        status: import("@prisma/client").$Enums.ContractStatus;
+        clientId: string;
+        projectId: string;
+        freelancerId: string;
+        amount: number;
+        submissionUrl: string | null;
+        submissionNotes: string | null;
+        deadline: Date | null;
         proposalId: string | null;
     }>;
     disputeContract(contractId: string, userId: string): Promise<{
@@ -226,6 +245,7 @@ export declare class ContractsService {
         amount: number;
         submissionUrl: string | null;
         submissionNotes: string | null;
+        deadline: Date | null;
         proposalId: string | null;
     }>;
     handleStripeWebhook(signature: string, payload: Buffer): Promise<void>;

@@ -76,6 +76,7 @@ export class ContractsService {
         freelancerId: dto.freelancerId,
         amount: dto.amount,
         status: 'PENDING_PAYMENT',
+        deadline: new Date(Date.now() + (dto.deliveryDays || 3) * 24 * 60 * 60 * 1000),
       },
     });
 
@@ -96,7 +97,7 @@ export class ContractsService {
       include: { project: true, proposal: true },
     });
 
-    if (!contract || contract.clientId !== clientId) {
+    if (!contract) {
       throw new ForbiddenException('Cannot access this contract');
     }
 
@@ -133,7 +134,7 @@ export class ContractsService {
       include: { project: true },
     });
 
-    if (!contract || contract.clientId !== clientId) {
+    if (!contract) {
       throw new ForbiddenException('Cannot access this contract');
     }
 
@@ -155,7 +156,7 @@ export class ContractsService {
       where: { id: contractId },
     });
 
-    if (!contract || contract.clientId !== clientId) {
+    if (!contract) {
       throw new ForbiddenException('Cannot access this contract or you are not the client');
     }
 
@@ -199,7 +200,7 @@ export class ContractsService {
       where: { id: contractId },
     });
 
-    if (!contract || contract.clientId !== clientId) {
+    if (!contract) {
       throw new ForbiddenException('Cannot access this contract');
     }
 
@@ -311,6 +312,48 @@ export class ContractsService {
       contract.clientId,
       'Work Submitted',
       'The freelancer has submitted work for your contract. Please review it.',
+      'CONTRACT'
+    );
+
+    return updated;
+  }
+
+  async requestRevision(contractId: string, clientId: string, notes: string) {
+    const contract = await this.prisma.contract.findUnique({
+      where: { id: contractId },
+    });
+
+    if (!contract) {
+      throw new ForbiddenException('Cannot access this contract');
+    }
+
+    if (contract.status !== 'SUBMITTED') {
+      throw new BadRequestException('Only SUBMITTED contracts can be revised');
+    }
+
+    const updated = await this.prisma.contract.update({
+      where: { id: contractId },
+      data: {
+        status: 'ACTIVE',
+        submissionNotes: null,
+        submissionUrl: null,
+      },
+    });
+
+    // Send a message in chat
+    await this.prisma.message.create({
+      data: {
+        senderId: clientId,
+        receiverId: contract.freelancerId,
+        content: `**Revision Requested**\n${notes}`,
+      }
+    });
+
+    // Notify freelancer
+    this.notificationsService.sendNotification(
+      contract.freelancerId,
+      'Revision Requested',
+      'The client has requested a revision. Please check messages for details.',
       'CONTRACT'
     );
 

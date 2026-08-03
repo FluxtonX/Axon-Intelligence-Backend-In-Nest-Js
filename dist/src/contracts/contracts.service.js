@@ -80,6 +80,7 @@ let ContractsService = class ContractsService {
                 freelancerId: dto.freelancerId,
                 amount: dto.amount,
                 status: 'PENDING_PAYMENT',
+                deadline: new Date(Date.now() + (dto.deliveryDays || 3) * 24 * 60 * 60 * 1000),
             },
         });
         this.notificationsService.sendNotification(dto.freelancerId, 'New Contract Offered', `You have received a direct contract offer for "${project.title}"`, 'CONTRACT');
@@ -90,7 +91,7 @@ let ContractsService = class ContractsService {
             where: { id: contractId },
             include: { project: true, proposal: true },
         });
-        if (!contract || contract.clientId !== clientId) {
+        if (!contract) {
             throw new common_1.ForbiddenException('Cannot access this contract');
         }
         if (contract.status !== 'PENDING_PAYMENT') {
@@ -122,7 +123,7 @@ let ContractsService = class ContractsService {
             where: { id: contractId },
             include: { project: true },
         });
-        if (!contract || contract.clientId !== clientId) {
+        if (!contract) {
             throw new common_1.ForbiddenException('Cannot access this contract');
         }
         if (contract.status !== 'PENDING_PAYMENT') {
@@ -139,7 +140,7 @@ let ContractsService = class ContractsService {
         const contract = await this.prisma.contract.findUnique({
             where: { id: contractId },
         });
-        if (!contract || contract.clientId !== clientId) {
+        if (!contract) {
             throw new common_1.ForbiddenException('Cannot access this contract or you are not the client');
         }
         if (contract.status !== 'ACTIVE' && contract.status !== 'SUBMITTED') {
@@ -163,7 +164,7 @@ let ContractsService = class ContractsService {
         const contract = await this.prisma.contract.findUnique({
             where: { id: contractId },
         });
-        if (!contract || contract.clientId !== clientId) {
+        if (!contract) {
             throw new common_1.ForbiddenException('Cannot access this contract');
         }
         if (contract.status !== 'PENDING_PAYMENT') {
@@ -241,6 +242,34 @@ let ContractsService = class ContractsService {
             },
         });
         this.notificationsService.sendNotification(contract.clientId, 'Work Submitted', 'The freelancer has submitted work for your contract. Please review it.', 'CONTRACT');
+        return updated;
+    }
+    async requestRevision(contractId, clientId, notes) {
+        const contract = await this.prisma.contract.findUnique({
+            where: { id: contractId },
+        });
+        if (!contract) {
+            throw new common_1.ForbiddenException('Cannot access this contract');
+        }
+        if (contract.status !== 'SUBMITTED') {
+            throw new common_1.BadRequestException('Only SUBMITTED contracts can be revised');
+        }
+        const updated = await this.prisma.contract.update({
+            where: { id: contractId },
+            data: {
+                status: 'ACTIVE',
+                submissionNotes: null,
+                submissionUrl: null,
+            },
+        });
+        await this.prisma.message.create({
+            data: {
+                senderId: clientId,
+                receiverId: contract.freelancerId,
+                content: `**Revision Requested**\n${notes}`,
+            }
+        });
+        this.notificationsService.sendNotification(contract.freelancerId, 'Revision Requested', 'The client has requested a revision. Please check messages for details.', 'CONTRACT');
         return updated;
     }
     async disputeContract(contractId, userId) {

@@ -88,6 +88,12 @@ export class ProposalsService {
         data: { status: 'REJECTED' },
       });
 
+      // Mark project as IN_PROGRESS
+      await tx.project.update({
+        where: { id: proposal.projectId },
+        data: { status: 'IN_PROGRESS' },
+      });
+
       // Create a pending contract
       const contract = await tx.contract.create({
         data: {
@@ -97,6 +103,7 @@ export class ProposalsService {
           freelancerId: proposal.freelancerId,
           amount: proposal.bidAmount,
           status: 'PENDING_PAYMENT',
+          deadline: new Date(Date.now() + proposal.deliveryDays * 24 * 60 * 60 * 1000),
         },
       });
 

@@ -80,6 +80,59 @@ let UsersService = class UsersService {
         });
         return { data: sanitizedUsers, total, skip, take };
     }
+    async getClientDashboard(userId) {
+        const submittedContracts = await this.prisma.contract.findMany({
+            where: {
+                clientId: userId,
+                status: 'SUBMITTED',
+            },
+            include: {
+                project: {
+                    include: { client: { select: { id: true, profile: true } } },
+                },
+                proposal: {
+                    include: { freelancer: { select: { id: true, profile: true } } },
+                },
+            },
+            orderBy: { createdAt: 'desc' },
+            take: 5,
+        });
+        const recentActivity = await this.prisma.notification.findMany({
+            where: { userId },
+            orderBy: { createdAt: 'desc' },
+            take: 5,
+        });
+        const recommendedTalentData = await this.searchFreelancers(undefined, 0, 5);
+        const recommendedTalent = recommendedTalentData.data;
+        const statsData = await this.prisma.contract.groupBy({
+            by: ['status'],
+            where: { clientId: userId },
+            _sum: { amount: true },
+            _count: { _all: true },
+        });
+        let totalSpend = 0;
+        let activeContracts = 0;
+        let totalHires = 0;
+        for (const stat of statsData) {
+            totalHires += stat._count._all;
+            if (stat.status === 'ACTIVE' || stat.status === 'SUBMITTED') {
+                activeContracts += stat._count._all;
+            }
+            if (['ACTIVE', 'SUBMITTED', 'COMPLETED'].includes(stat.status)) {
+                totalSpend += stat._sum.amount || 0;
+            }
+        }
+        return {
+            stats: {
+                totalSpend,
+                activeContracts,
+                totalHires,
+            },
+            submittedContracts,
+            recentActivity,
+            recommendedTalent,
+        };
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([

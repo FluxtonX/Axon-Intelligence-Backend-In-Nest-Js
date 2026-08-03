@@ -79,6 +79,7 @@ export declare class ProposalsController {
         amount: number;
         submissionUrl: string | null;
         submissionNotes: string | null;
+        deadline: Date | null;
         proposalId: string | null;
     }>;
 }

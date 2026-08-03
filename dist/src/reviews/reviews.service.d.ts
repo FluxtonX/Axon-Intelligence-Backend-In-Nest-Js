@@ -7,29 +7,29 @@ export declare class ReviewsService {
     constructor(prisma: PrismaService, notificationsService: NotificationsService);
     createReview(reviewerId: string, dto: CreateReviewDto): Promise<{
         id: string;
-        rating: number;
-        comment: string | null;
         createdAt: Date;
         contractId: string;
-        reviewerId: string;
         revieweeId: string;
+        rating: number;
+        comment: string | null;
+        reviewerId: string;
     }>;
     getReviewsForUser(userId: string, skip?: number, take?: number): Promise<({
         reviewer: {
+            id: string;
             profile: {
                 firstName: string;
                 lastName: string;
                 avatarUrl: string | null;
             } | null;
-            id: string;
         };
     } & {
         id: string;
-        rating: number;
-        comment: string | null;
         createdAt: Date;
         contractId: string;
-        reviewerId: string;
         revieweeId: string;
+        rating: number;
+        comment: string | null;
+        reviewerId: string;
     })[]>;
 }

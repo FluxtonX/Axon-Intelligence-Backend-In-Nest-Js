@@ -46,6 +46,9 @@ let ContractsController = class ContractsController {
     async completeContract(id, user) {
         return this.contractsService.completeContract(id, user.id);
     }
+    async requestRevision(id, notes, user) {
+        return this.contractsService.requestRevision(id, user.id, notes);
+    }
     async fundContract(id, user) {
         return this.contractsService.fundContract(id, user.id);
     }
@@ -124,6 +127,17 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], ContractsController.prototype, "completeContract", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('contracts/:id/revision'),
+    (0, swagger_1.ApiOperation)({ summary: 'Request revision for a contract' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)('notes')),
+    __param(2, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:returntype", Promise)
+], ContractsController.prototype, "requestRevision", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('contracts/:id/fund'),

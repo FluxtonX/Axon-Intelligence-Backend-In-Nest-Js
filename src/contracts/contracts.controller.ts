@@ -63,6 +63,17 @@ export class ContractsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post('contracts/:id/revision')
+  @ApiOperation({ summary: 'Request revision for a contract' })
+  async requestRevision(
+    @Param('id') id: string,
+    @Body('notes') notes: string,
+    @CurrentUser() user: any
+  ) {
+    return this.contractsService.requestRevision(id, user.id, notes);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('contracts/:id/fund')
   @ApiOperation({ summary: 'Simulate funding a contract' })
   async fundContract(@Param('id') id: string, @CurrentUser() user: any) {

@@ -81,6 +81,7 @@ export declare class ProposalsService {
         amount: number;
         submissionUrl: string | null;
         submissionNotes: string | null;
+        deadline: Date | null;
         proposalId: string | null;
     }>;
 }

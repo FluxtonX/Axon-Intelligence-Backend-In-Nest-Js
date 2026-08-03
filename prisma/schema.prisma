@@ -157,6 +157,7 @@ model Contract {
   submissionUrl String?
   submissionNotes String?
   createdAt    DateTime       @default(now())
+  deadline     DateTime?
   
   reviews      Review[]
 }

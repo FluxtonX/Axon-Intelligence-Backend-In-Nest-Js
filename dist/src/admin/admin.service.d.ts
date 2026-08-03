@@ -61,6 +61,7 @@ export declare class AdminService {
         amount: number;
         submissionUrl: string | null;
         submissionNotes: string | null;
+        deadline: Date | null;
         proposalId: string | null;
     }>;
 }

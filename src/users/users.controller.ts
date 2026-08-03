@@ -18,6 +18,13 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('me/client-dashboard')
+  @ApiOperation({ summary: 'Get aggregated data for client dashboard' })
+  getClientDashboard(@CurrentUser() user: any) {
+    return this.usersService.getClientDashboard(user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Patch('me/profile')
   @ApiOperation({ summary: 'Update current user profile' })
   updateProfile(@CurrentUser() user: any, @Body() updateData: any) {
